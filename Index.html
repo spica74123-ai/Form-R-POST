@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบบันทึกข้อมูลกำลังพล R-POST</title>
+    <!-- CSS & JS Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <!-- Library สำหรับแปลง HTML เป็นรูปภาพและ PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            /* Animated Gradient Background */
+            background: linear-gradient(-45deg, #e0e7ff, #f3f4f6, #dbeafe, #f8fafc);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Container Drop Animation */
+        .form-container {
+            animation: dropIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes dropIn {
+            from {
+                opacity: 0;
+                transform: translateY(-40px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Smooth Tab Transition */
+        .tab-content {
+            animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Input Glow Effect */
+        .input-field {
+            @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm px-4 py-2 border;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .input-field:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.2), 0 4px 6px -2px rgba(59, 130, 246, 0.1);
+            border-color: #3b82f6;
+            outline: none;
+        }
+
+        /* Floating Animation for Icons */
+        .floating-icon {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        /* สไตล์สำหรับหน้ากระดาษประกาศ */
+        .a4-preview {
+            background: white;
+            padding: 40px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            margin: 20px auto;
+            max-width: 800px;
+            color: #000;
+            transition: transform 0.3s ease;
+        }
+
+        .a4-preview:hover {
+            transform: scale(1.01);
+        }
+
+        .announce-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .announce-table th,
+        .announce-table td {
+            border: 1px solid #333;
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        .announce-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-center py-10 px-4 sm:px-6 lg:px-8">
+
+    <!-- ========================================== -->
+    <!-- หน้าจอเข้าสู่ระบบ / สมัครสมาชิก (Auth) -->
+    <!-- ========================================== -->
+    <div id="authApp"
+        class="max-w-md w-full bg-white rounded-2xl shadow-2xl overflow-hidden form-container border-t-8 border-blue-800 z-10 my-auto">
+        <div class="bg-blue-800 px-6 py-8 text-center text-white relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-blue-600 rounded-full opacity-50 blur-xl"></div>
+            <div class="absolute -left-10 -bottom-10 w-32 h-32 bg-blue-900 rounded-full opacity-50 blur-xl"></div>
+            <h2 class="text-3xl font-bold uppercase tracking-wide relative z-10">R-POST System</h2>
+            <p class="mt-2 text-sm text-blue-200 relative z-10">กรุณาเข้าสู่ระบบเพื่อใช้งาน</p>
+        </div>
+        <div class="p-8">
+            <form id="loginForm" class="space-y-4 tab-content">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">หน่วย</label>
+                    <select id="loginUnit" required class="input-field">
+                        <option value="">-- กำลังโหลดข้อมูลหน่วย... --</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">อีเมล (Email)</label>
+                    <input type="email" id="loginEmail" required class="input-field" placeholder="email@army.mi.th">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">รหัสผ่าน (Password)</label>
+                    <input type="password" id="loginPass" required class="input-field" placeholder="••••••••">
+                </div>
+                <button type="submit"
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-lg font-bold text-white bg-gradient-to-r from-blue-700 to-blue-900 hover:from-blue-800 hover:to-blue-950 transform hover:-translate-y-1 transition-all duration-300 mt-6">
+                    เข้าสู่ระบบ
+                </button>
+                <p class="text-center text-sm text-gray-500 mt-4">ยังไม่มีบัญชี? <a href="#" onclick="toggleAuthMode()"
+                        class="text-blue-600 font-semibold hover:underline transition-colors">สมัครสมาชิก</a></p>
+            </form>
+
+            <form id="registerForm" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">หน่วย</label>
+                    <select id="regUnit" required class="input-field">
+                        <option value="">-- กำลังโหลดข้อมูลหน่วย... --</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">อีเมลใหม่ (Email)</label>
+                    <input type="email" id="regEmail" required class="input-field" placeholder="email@army.mi.th">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">ตั้งรหัสผ่าน (Password)</label>
+                    <input type="password" id="regPass" required class="input-field" placeholder="••••••••">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">ยืนยันรหัสผ่าน</label>
+                    <input type="password" id="regPassConfirm" required class="input-field" placeholder="••••••••">
+                </div>
+                <button type="submit"
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-lg font-bold text-white bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 transform hover:-translate-y-1 transition-all duration-300 mt-6">
+                    สมัครสมาชิก
+                </button>
+                <p class="text-center text-sm text-gray-500 mt-4">มีบัญชีแล้ว? <a href="#" onclick="toggleAuthMode()"
+                        class="text-blue-600 font-semibold hover:underline transition-colors">เข้าสู่ระบบ</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- แอปพลิเคชันหลัก -->
+    <!-- ========================================== -->
+    <div id="mainApp"
+        class="hidden max-w-6xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden form-container border-t-8 border-blue-800 my-auto">
+        <div class="bg-blue-800 px-6 py-8 text-center text-white relative overflow-hidden">
+            <div class="absolute -right-20 -top-20 w-64 h-64 bg-blue-600 rounded-full opacity-30 blur-3xl"></div>
+            <div class="absolute -left-20 -bottom-20 w-64 h-64 bg-blue-900 rounded-full opacity-30 blur-3xl"></div>
+            <button onclick="logoutUser()"
+                class="absolute top-4 right-4 bg-red-500/20 hover:bg-red-600 border border-red-400/50 hover:border-transparent text-white text-xs px-4 py-2 rounded-full shadow-sm flex items-center transition-all duration-300 z-20 backdrop-blur-sm">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                    </path>
+                </svg> ออกจากระบบ
+            </button>
+            <h2 class="text-3xl sm:text-4xl font-bold uppercase tracking-wide relative z-10 drop-shadow-md">
+                ระบบบันทึกข้อมูลกำลังพล</h2>
+            <p class="mt-3 text-sm sm:text-base text-blue-200 relative z-10 font-medium tracking-wide">
+                ผู้ผ่านการทดสอบความรู้ในการปฏิบัติงานด้านกำลังพล (R-POST)</p>
+        </div>
+
+        <div
+            class="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-600 p-5 m-6 mb-2 rounded-r-xl shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+                <h3 class="text-lg font-bold text-blue-800 mb-2 flex items-center">
+                    <svg class="w-5 h-5 mr-2 floating-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    ขั้นตอนการใช้งานระบบ
+                </h3>
+                <ul class="list-disc list-inside text-sm text-blue-900 space-y-2 ml-2 font-medium">
+                    <li class="hover:text-blue-700 transition-colors"><b>เจ้าหน้าที่หน่วย:</b> เลือกแท็บ
+                        "บันทึกรายบุคคล" เพื่อกรอกข้อมูล (ระบุสถานะใบประกาศฯ และแนบไฟล์ PDF) และสามารถโหลดประวัติได้
+                    </li>
+                    <li class="hover:text-blue-700 transition-colors"><b>การออกประกาศ:</b> ใช้แท็บ
+                        "ประกาศผู้มีสิทธิ์สอบ" นำเข้า Excel เพื่อสร้างประกาศ (รูปภาพ/PDF) อัตโนมัติ</li>
+                </ul>
+            </div>
+            <button type="button" onclick="downloadTemplate()"
+                class="inline-flex items-center px-5 py-2.5 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transform hover:-translate-y-0.5 transition-all text-sm font-bold whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                    </path>
+                </svg> ดาวน์โหลดแบบฟอร์ม
+            </button>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="flex border-b border-gray-200 bg-gray-50 flex-col sm:flex-row text-sm p-1 gap-1">
+            <button type="button" id="btnTabBulk"
+                class="flex-1 py-3 text-center font-bold text-blue-800 border-b-2 border-blue-800 bg-white rounded-t-lg transition-all duration-300 focus:outline-none shadow-sm hidden">ส่งรายชื่อระดับหน่วย</button>
+            <button type="button" id="btnTabIndividual"
+                class="flex-1 py-3 text-center font-bold text-blue-800 border-b-2 border-blue-800 bg-white rounded-t-lg transition-all duration-300 focus:outline-none shadow-sm">บันทึกรายบุคคล</button>
+            <button type="button" id="btnTabEligible"
+                class="flex-1 py-3 text-center font-medium text-gray-500 border-b-2 border-transparent hover:text-blue-600 hover:bg-gray-100 rounded-t-lg transition-all duration-300 focus:outline-none">ประกาศผู้มีสิทธิ์สอบ</button>
+            <button type="button" id="btnTabReport"
+                class="flex-1 py-3 text-center font-medium text-gray-500 border-b-2 border-transparent hover:text-blue-600 hover:bg-gray-100 rounded-t-lg transition-all duration-300 focus:outline-none">ระบบรายงานผล</button>
+        </div>
+
+        <!-- TAB 1: ส่งรายชื่อระดับหน่วย -->
+        <div id="tabBulk" class="bg-white tab-content hidden">
+            <form id="bulkForm" class="p-8 space-y-6" novalidate>
+                <div
+                    class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-2 text-sm text-yellow-800 font-medium rounded-r-lg shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <span>กรุณาแนบไฟล์บัญชีรายชื่อกำลังพล (Excel) ตามแบบฟอร์มที่กำหนดเท่านั้น</span>
+                </div>
+                <div class="grid grid-cols-1 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">หน่วย <span
+                                class="text-red-500">*</span></label>
+                        <select id="bulkUnit" required class="input-field">
+                            <option value="">-- กำลังโหลดข้อมูลหน่วย... --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">อีเมลเจ้าหน้าที่ผู้ส่งข้อมูล <span
+                                class="text-red-500">*</span></label>
+                        <input type="email" id="bulkEmail" required class="input-field"
+                            placeholder="example@army.mi.th">
+                    </div>
+                    <div
+                        class="bg-green-50/50 p-6 rounded-xl border border-green-200 mt-2 hover:shadow-md transition-shadow duration-300">
+                        <label class="block text-sm font-bold text-green-800 mb-3 flex items-center">
+                            ไฟล์บัญชีรายชื่อ (Excel เท่านั้น) <span class="text-red-500 ml-1">*</span>
+                        </label>
+                        <input type="file" id="bulkExcelFile" accept=".xlsx, .xls" required
+                            class="block w-full text-sm text-gray-600 file:mr-4 file:py-2.5 file:px-5 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-100 file:text-green-700 cursor-pointer">
+                    </div>
+                </div>
+                <div class="pt-6">
+                    <button type="submit"
+                        class="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 transform hover:-translate-y-1 hover:shadow-xl transition-all duration-300">ส่งไฟล์บัญชีรายชื่อหน่วย</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- TAB 2: บันทึกรายบุคคล -->
+        <div id="tabIndividual" class="bg-white tab-content">
+            <form id="dataForm" class="p-8 space-y-6 tab-content" novalidate>
+                <div class="bg-indigo-50/50 p-5 rounded-xl border border-indigo-100 mb-6">
+                    <label class="block text-base font-bold text-indigo-800 mb-3 flex items-center">
+                        ท่านมีใบประกาศนียบัตร (R-POST) หรือไม่? <span class="text-red-500 ml-1">*</span>
+                    </label>
+                    <div class="flex flex-wrap gap-6">
+                        <label class="inline-flex items-center cursor-pointer">
+                            <input type="radio" name="hasCertificate" value="มีใบประกาศ"
+                                class="w-5 h-5 text-indigo-600 border-gray-300" checked onchange="toggleCertFields()">
+                            <span class="ml-2 text-gray-700 font-medium text-base">มีใบประกาศ (กรอกคะแนนและแนบไฟล์
+                                PDF)</span>
+                        </label>
+                        <label class="inline-flex items-center cursor-pointer">
+                            <input type="radio" name="hasCertificate" value="ไม่มีใบประกาศ"
+                                class="w-5 h-5 text-indigo-600 border-gray-300" onchange="toggleCertFields()">
+                            <span class="ml-2 text-gray-700 font-medium text-base">ไม่มีใบประกาศ
+                                (บันทึกเฉพาะรายชื่อ)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">เลขประจำตัวประชาชน <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" id="idCard" required pattern="\d{13}" maxlength="13" class="input-field"
+                            placeholder="1234567890123">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">ยศ <span
+                                class="text-red-500">*</span></label>
+                        <select id="rank" required class="input-field">
+                            <option value="">-- เลือกยศ --</option>
+                            <option value="พลเอก">พลเอก</option>
+                            <option value="พลโท">พลโท</option>
+                            <option value="พลตรี">พลตรี</option>
+                            <option value="พันเอก">พันเอก</option>
+                            <option value="พันโท">พันโท</option>
+                            <option value="พันตรี">พันตรี</option>
+                            <option value="ร้อยเอก">ร้อยเอก</option>
+                            <option value="ร้อยโท">ร้อยโท</option>
+                            <option value="ร้อยตรี">ร้อยตรี</option>
+                            <option value="จ่าสิบเอก">จ่าสิบเอก</option>
+                            <option value="จ่าสิบโท">จ่าสิบโท</option>
+                            <option value="จ่าสิบตรี">จ่าสิบตรี</option>
+                            <option value="สิบเอก">สิบเอก</option>
+                            <option value="สิบโท">สิบโท</option>
+                            <option value="สิบตรี">สิบตรี</option>
+                            <option value="นาย">นาย</option>
+                            <option value="นาง">นาง</option>
+                            <option value="นางสาว">นางสาว</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">ชื่อ <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" id="firstName" required class="input-field">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">นามสกุล <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" id="lastName" required class="input-field">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">หน่วย <span
+                                class="text-red-500">*</span></label>
+                        <select id="unit" required class="input-field">
+                            <option value="">-- กำลังโหลดข้อมูลหน่วย... --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">สังกัด <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" id="affiliation" required class="input-field" placeholder="ระบุสังกัด">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">ตำแหน่งปกติ <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" id="regularPosition" required class="input-field">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">ตำแหน่งในสนาม <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" id="fieldPosition" required class="input-field" placeholder="ระบุ หรือ -">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700">อีเมลผู้บันทึก <span
+                                class="text-red-500">*</span></label>
+                        <input type="email" id="email" required
+                            class="input-field bg-gray-100 text-gray-500 cursor-not-allowed border-dashed" readonly>
+                    </div>
+                </div>
+
+                <div id="certFieldsArea" class="space-y-6 mt-6 transition-all duration-500 overflow-hidden">
+                    <hr class="border-gray-100">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">คะแนน <span
+                                    class="text-red-500">*</span></label>
+                            <input type="number" id="score" required min="0" step="0.01" class="input-field cert-req">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">ร้อยละ (%) <span
+                                    class="text-red-500">*</span></label>
+                            <input type="number" id="percentage" required min="0" max="100" step="0.01"
+                                class="input-field cert-req bg-gray-50 text-gray-700 font-semibold"
+                                placeholder="คำนวณอัตโนมัติ">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">ผลการทดสอบ <span
+                                    class="text-red-500">*</span></label>
+                            <select id="status" required class="input-field font-semibold cert-req bg-gray-50">
+                                <option value="">-- ประเมินอัตโนมัติ --</option>
+                                <option value="ผ่าน" class="text-green-600">ผ่าน</option>
+                                <option value="ไม่ผ่าน" class="text-red-600">ไม่ผ่าน</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">วันที่ออกใบประกาศ <span
+                                    class="text-red-500">*</span></label>
+                            <input type="date" id="issueDate" required class="input-field cert-req">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">วันหมดอายุ <span
+                                    class="text-red-500">*</span></label>
+                            <input type="date" id="expireDate" required class="input-field bg-gray-50 cert-req"
+                                readonly>
+                        </div>
+                    </div>
+                    <div class="bg-blue-50/50 p-6 rounded-xl border border-blue-200">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">ใบประกาศฯ (PDF) <span
+                                class="text-red-500">*</span></label>
+                        <input type="file" id="pdfFile" accept=".pdf" required
+                            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 cursor-pointer cert-req">
+                    </div>
+                </div>
+
+                <div class="pt-6">
+                    <button type="submit"
+                        class="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white bg-gradient-to-r from-blue-700 to-blue-800 hover:from-blue-800 hover:to-blue-900 transform hover:-translate-y-1 hover:shadow-xl transition-all duration-300">บันทึกข้อมูล</button>
+                </div>
+            </form>
+
+            <div class="p-8 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <h3 class="text-xl font-bold text-gray-800">ประวัติการบันทึกข้อมูลของท่าน</h3>
+                    <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+                        <button type="button" onclick="printUserHistory()"
+                            class="flex-1 sm:flex-none px-4 py-2 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 font-bold">พิมพ์ประวัติ</button>
+                        <button type="button" onclick="downloadUserHistory()"
+                            class="flex-1 sm:flex-none px-4 py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 font-bold">โหลดประวัติ
+                            (Excel)</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4 mb-6">
+                    <div class="bg-white p-5 rounded-xl shadow-sm border-b-4 border-blue-500 text-center">
+                        <p class="text-xs sm:text-sm text-gray-500">บันทึกทั้งหมด</p>
+                        <p class="text-3xl font-bold text-blue-700 mt-1" id="statTotal">0</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl shadow-sm border-b-4 border-green-500 text-center">
+                        <p class="text-xs sm:text-sm text-gray-500">มีใบประกาศ</p>
+                        <p class="text-3xl font-bold text-green-600 mt-1" id="statHasCert">0</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl shadow-sm border-b-4 border-yellow-500 text-center">
+                        <p class="text-xs sm:text-sm text-gray-500">ไม่มีใบประกาศ</p>
+                        <p class="text-3xl font-bold text-yellow-600 mt-1" id="statNoCert">0</p>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto bg-white rounded-xl shadow-sm border border-gray-200">
+                    <table class="w-full text-sm text-left text-gray-600">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-100/80">
+                            <tr>
+                                <th class="px-4 py-4 font-bold whitespace-nowrap">วัน/เวลา</th>
+                                <th class="px-4 py-4 font-bold whitespace-nowrap">เลข ปชช.</th>
+                                <th class="px-4 py-4 font-bold whitespace-nowrap">ยศ ชื่อ-นามสกุล</th>
+                                <th class="px-4 py-4 font-bold whitespace-nowrap">หน่วย/สังกัด</th>
+                                <th class="px-4 py-4 font-bold whitespace-nowrap">ตำแหน่งปกติ</th>
+                                <th class="px-4 py-4 font-bold whitespace-nowrap">ตำแหน่งในสนาม</th>
+                                <th class="px-4 py-4 font-bold text-center whitespace-nowrap">คะแนน (%)</th>
+                                <th class="px-4 py-4 font-bold text-center whitespace-nowrap">สถานะ</th>
+                                <th class="px-4 py-4 font-bold whitespace-nowrap">วันหมดอายุ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody" class="divide-y divide-gray-100">
+                            <tr>
+                                <td colspan="9" class="px-5 py-8 text-center text-gray-400">ยังไม่มีข้อมูลการบันทึก</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: สร้างประกาศผู้มีสิทธิ์สอบ -->
+        <div id="tabEligible" class="hidden bg-gray-50 p-8 min-h-[500px] tab-content">
+            <div class="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-md border-t-4 border-indigo-500 mb-8">
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">สร้างประกาศผู้มีสิทธิ์สอบ</h3>
+                <p class="text-sm text-gray-500 mb-6">อัปโหลดไฟล์รายชื่อ Excel เพื่อสร้างประกาศอัตโนมัติ</p>
+                <div
+                    class="flex flex-col sm:flex-row items-center gap-4 bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
+                    <input type="file" id="importEligibleExcel" accept=".xlsx, .xls"
+                        class="block w-full sm:w-auto text-sm text-gray-600 file:mr-4 file:py-2.5 file:px-5 file:rounded-full file:border-0 file:bg-indigo-100 file:text-indigo-700 cursor-pointer">
+                    <div id="eligibleActionBtns" class="hidden flex gap-3 w-full sm:w-auto mt-4 sm:mt-0 ml-auto">
+                        <button onclick="exportAnnouncementImage()"
+                            class="px-5 py-2.5 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 font-bold">รูปภาพ
+                            (PNG)</button>
+                        <button onclick="exportAnnouncementPDF()"
+                            class="px-5 py-2.5 bg-rose-600 text-white rounded-lg shadow-md hover:bg-rose-700 font-bold">เอกสาร
+                            (PDF)</button>
+                    </div>
+                </div>
+            </div>
+            <div id="announcementPaper" class="a4-preview hidden">
+                <div class="text-center mb-8">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Emblem_of_the_Royal_Thai_Army.svg/150px-Emblem_of_the_Royal_Thai_Army.svg.png"
+                        alt="โลโก้ ทบ." class="h-24 w-auto mx-auto mb-5 grayscale opacity-90">
+                    <h2 class="text-2xl font-bold mb-2">ประกาศ</h2>
+                    <h3 class="text-xl font-bold">รายชื่อผู้มีสิทธิ์เข้ารับการทดสอบความรู้ในการปฏิบัติงานด้านกำลังพล
+                    </h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="announce-table" id="announcementTableContent"></table>
+                </div>
+                <div class="mt-16 flex justify-end">
+                    <div class="text-center">
+                        <p class="mb-10">ประกาศ ณ วันที่ <span id="announceDate"></span></p>
+                        <p>...........................................................</p>
+                        <p class="mt-2">(คณะกรรมการจัดการทดสอบ)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: ระบบรายงานผล -->
+        <div id="tabReport"
+            class="hidden bg-white p-12 text-center min-h-[400px] flex flex-col justify-center tab-content">
+            <h3 class="text-3xl font-bold text-gray-900">ประกาศรายชื่อผลการทดสอบ</h3>
+            <div class="mt-10 flex flex-col sm:flex-row justify-center gap-6">
+                <button type="button" onclick="downloadReport('ผ่าน')"
+                    class="px-8 py-4 shadow-lg text-lg font-bold rounded-xl text-white bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700">ดาวน์โหลดรายชื่อ
+                    "ผ่าน"</button>
+                <button type="button" onclick="downloadReport('ไม่ผ่าน')"
+                    class="px-8 py-4 shadow-lg text-lg font-bold rounded-xl text-white bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700">ดาวน์โหลดรายชื่อ
+                    "ไม่ผ่าน"</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script ควบคุมการทำงานเชื่อมต่อกับ Vercel / Apps Script API -->
+    <script>
+        // ==========================================
+        // ⚠️ การตั้งค่าการเชื่อมต่อ API ของ VERCEL
+        // ==========================================
+        // ให้นำ URL Web App ของ Google Apps Script มาใส่ตรงนี้
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyeLRQzkk3YGOcAf7F7OR9d4U-EunZw7qTSMl2FT2a3pYNKM2ByGKd-7q1Cr0ATLFW5/exec";
+
+        async function callGasApi(action, dataPayload) {
+            try {
+                if (GAS_API_URL.includes("นำ_URL_WEB_APP")) {
+                    console.warn("ใช้ระบบ API จำลอง (Mock API) เนื่องจากยังไม่ได้ตั้งค่า GAS_API_URL ในโค้ด");
+                    return await mockGasApi(action, dataPayload);
+                }
+
+                const response = await fetch(GAS_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // ต้องเป็น text/plain สำหรับ Apps Script
+                    body: JSON.stringify({ action: action, data: dataPayload })
+                });
+
+                if (!response.ok) throw new Error('เกิดปัญหาในการเชื่อมต่อเซิร์ฟเวอร์ API');
+                return await response.json();
+            } catch (error) {
+                console.error("API Call Error:", error);
+                throw error;
+            }
+        }
+
+        // ระบบ API จำลองสำหรับใช้ทดสอบหน้าเว็บก่อนต่อจริง
+        async function mockGasApi(action, data) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    switch (action) {
+                        case 'getUnitList':
+                            resolve(["หน่วยจำลอง A", "หน่วยจำลอง B", "หน่วยจำลอง C"]);
+                            break;
+                        case 'loginUser':
+                            resolve({ success: true, message: "จำลองการล็อกอินสำเร็จ", isAdmin: data.email.includes('admin'), unit: "หน่วยจำลอง A" });
+                            break;
+                        case 'registerUser':
+                            resolve({ success: true, message: "จำลองการสมัครสำเร็จ" });
+                            break;
+                        case 'getUserHistory':
+                            resolve([]);
+                            break;
+                        case 'processFormSubmission':
+                        case 'processBulkSubmission':
+                            resolve({ success: true, message: "จำลองการทำงานสำเร็จ" });
+                            break;
+                        case 'getReportData':
+                            resolve([]);
+                            break;
+                        default:
+                            resolve({ success: false, message: "Mock action not found" });
+                    }
+                }, 800);
+            });
+        }
+
+        let currentUserEmail = null;
+        let currentUserHistoryData = [];
+
+        async function loadUnitList() {
+            try {
+                const units = await callGasApi('getUnitList', {});
+                let options = '<option value="">-- เลือกหน่วย --</option>';
+                if (units && units.length > 0) {
+                    units.forEach(u => { options += `<option value="${u}">${u}</option>`; });
+                } else {
+                    options = '<option value="">-- ไม่พบข้อมูล --</option>';
+                }
+                const ids = ['loginUnit', 'regUnit', 'unit', 'bulkUnit'];
+                ids.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.innerHTML = options;
+                });
+            } catch (e) {
+                console.log("กำลังรอตั้งค่า API ให้สมบูรณ์...");
+            }
+        }
+
+        window.onload = () => {
+            loadUnitList();
+            const storedEmail = sessionStorage.getItem('rpost_user');
+            const storedIsAdmin = sessionStorage.getItem('rpost_isadmin') === 'true';
+            const storedUnit = sessionStorage.getItem('rpost_unit');
+            if (storedEmail) loginSuccess(storedEmail, storedIsAdmin, storedUnit);
+        };
+
+        function downloadTemplate() {
+            const templateLink = "https://docs.google.com/spreadsheets/d/13li0oh78ZkJOxk5UG8ll4M52RnpH-qYIQ7olOcwNXSE/export?format=xlsx";
+            window.open(templateLink, '_blank');
+        }
+
+        function toggleCertFields() {
+            const hasCert = document.querySelector('input[name="hasCertificate"]:checked').value === "มีใบประกาศ";
+            const certArea = document.getElementById('certFieldsArea');
+            const reqFields = document.querySelectorAll('.cert-req');
+
+            if (hasCert) {
+                certArea.classList.remove('hidden');
+                reqFields.forEach(el => el.setAttribute('required', 'true'));
+            } else {
+                certArea.classList.add('hidden');
+                reqFields.forEach(el => { el.removeAttribute('required'); el.classList.remove('!border-red-500', '!bg-red-50'); });
+            }
+        }
+
+        document.getElementById('score').addEventListener('input', function () {
+            const scoreVal = parseFloat(this.value);
+            if (!isNaN(scoreVal)) {
+                const percentage = scoreVal;
+                document.getElementById('percentage').value = percentage.toFixed(2);
+                document.getElementById('percentage').classList.remove('!border-red-500', '!bg-red-50');
+                const statusEl = document.getElementById('status');
+                statusEl.value = (percentage >= 60) ? "ผ่าน" : "ไม่ผ่าน";
+                statusEl.classList.remove('!border-red-500', '!bg-red-50');
+            } else {
+                document.getElementById('percentage').value = "";
+                document.getElementById('status').value = "";
+            }
+        });
+
+        document.getElementById('issueDate').addEventListener('change', function () {
+            if (this.value) {
+                const date = new Date(this.value);
+                date.setFullYear(date.getFullYear() + 2);
+                const exDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                document.getElementById('expireDate').value = exDate;
+            }
+        });
+
+        document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', function () { this.classList.remove('!border-red-500', '!bg-red-50'); }));
+
+        const tabs = [{ btn: 'btnTabBulk', content: 'tabBulk' }, { btn: 'btnTabIndividual', content: 'tabIndividual' }, { btn: 'btnTabEligible', content: 'tabEligible' }, { btn: 'btnTabReport', content: 'tabReport' }];
+        tabs.forEach(t => {
+            document.getElementById(t.btn).addEventListener('click', () => {
+                tabs.forEach(x => {
+                    const contentEl = document.getElementById(x.content);
+                    contentEl.classList.add('hidden'); contentEl.classList.remove('tab-content');
+                    const b = document.getElementById(x.btn);
+                    b.classList.remove('font-bold', 'text-blue-800', 'border-blue-800', 'bg-white');
+                    b.classList.add('font-medium', 'text-gray-500', 'border-transparent');
+                });
+                const activeContent = document.getElementById(t.content);
+                activeContent.classList.remove('hidden'); void activeContent.offsetWidth; activeContent.classList.add('tab-content');
+                const actBtn = document.getElementById(t.btn);
+                actBtn.classList.add('font-bold', 'text-blue-800', 'border-blue-800', 'bg-white');
+                actBtn.classList.remove('font-medium', 'text-gray-500', 'border-transparent');
+            });
+        });
+
+        const toBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error);
+        });
+
+        document.getElementById('dataForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            let valid = true;
+            this.querySelectorAll('[required]').forEach(el => { if (!el.value.trim()) { valid = false; el.classList.add('!border-red-500', '!bg-red-50'); } });
+
+            const idCard = document.getElementById('idCard').value;
+            if (idCard && !/^\d{13}$/.test(idCard)) return Swal.fire('ผิดพลาด', 'กรอกเลขบัตร 13 หลัก', 'warning');
+            if (!valid) return Swal.fire('ข้อมูลไม่ครบ', 'กรุณากรอกข้อมูลให้ครบทุกช่องที่มีเครื่องหมายดอกจัน', 'warning');
+
+            const hasCert = document.querySelector('input[name="hasCertificate"]:checked').value;
+            let pdFileBase64 = null, pdFileName = null;
+
+            if (hasCert === 'มีใบประกาศ') {
+                const pdFile = document.getElementById('pdfFile').files[0];
+                if (!pdFile) return Swal.fire('ผิดพลาด', 'กรุณาแนบไฟล์ PDF', 'warning');
+                if (!pdFile.name.match(/\.(pdf)$/i)) return Swal.fire('ผิดพลาด', 'แนบ PDF เท่านั้น', 'error');
+
+                Swal.fire({ title: 'กำลังประมวลผลและอัปโหลดไฟล์...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                pdFileBase64 = await toBase64(pdFile);
+                pdFileName = pdFile.name;
+            } else {
+                Swal.fire({ title: 'กำลังบันทึกข้อมูล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            }
+
+            const formData = {
+                email: document.getElementById('email').value,
+                idCard,
+                rank: document.getElementById('rank').value,
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                unit: document.getElementById('unit').value,
+                affiliation: document.getElementById('affiliation').value,
+                regularPosition: document.getElementById('regularPosition').value,
+                fieldPosition: document.getElementById('fieldPosition').value,
+
+                hasCertificate: hasCert,
+                score: hasCert === 'มีใบประกาศ' ? document.getElementById('score').value : null,
+                percentage: hasCert === 'มีใบประกาศ' ? document.getElementById('percentage').value : null,
+                status: hasCert === 'มีใบประกาศ' ? document.getElementById('status').value : null,
+                issueDate: hasCert === 'มีใบประกาศ' ? document.getElementById('issueDate').value : null,
+                expireDate: hasCert === 'มีใบประกาศ' ? document.getElementById('expireDate').value : null,
+
+                pdfFileBase64: pdFileBase64,
+                pdfFileName: pdFileName
+            };
+
+            try {
+                const res = await callGasApi('processFormSubmission', formData);
+                if (res.success) {
+                    Swal.fire('สำเร็จ', 'บันทึกเรียบร้อย', 'success').then(() => {
+                        this.reset();
+                        document.getElementById('email').value = currentUserEmail;
+                        const storedUnit = sessionStorage.getItem('rpost_unit');
+                        if (storedUnit) document.getElementById('unit').value = storedUnit;
+                        toggleCertFields();
+                        fetchUserHistory();
+                    });
+                } else { Swal.fire('Error', res.message, 'error'); }
+            } catch (err) { Swal.fire('Error', err.message, 'error'); }
+        });
+
+        document.getElementById('bulkForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            let valid = true;
+            this.querySelectorAll('[required]').forEach(el => { if (!el.value.trim()) { valid = false; el.classList.add('!border-red-500', '!bg-red-50'); } });
+            if (!valid) return Swal.fire('ข้อมูลไม่ครบ', 'กรุณากรอกข้อมูลให้ครบ', 'warning');
+
+            const bFile = document.getElementById('bulkExcelFile').files[0];
+            if (!bFile.name.match(/\.(xlsx|xls)$/i)) return Swal.fire('ผิดพลาด', 'แนบ Excel เท่านั้น', 'error');
+
+            Swal.fire({ title: 'กำลังอัปโหลด...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            const formData = {
+                unit: document.getElementById('bulkUnit').value, email: document.getElementById('bulkEmail').value,
+                excelFileBase64: await toBase64(bFile), excelFileName: bFile.name, excelFileMimeType: bFile.type
+            };
+
+            try {
+                const res = await callGasApi('processBulkSubmission', formData);
+                if (res.success) {
+                    Swal.fire('สำเร็จ', 'ส่งไฟล์เรียบร้อย', 'success').then(() => {
+                        this.reset();
+                        document.getElementById('bulkEmail').value = currentUserEmail;
+                        const storedUnit = sessionStorage.getItem('rpost_unit');
+                        if (storedUnit) document.getElementById('bulkUnit').value = storedUnit;
+                    });
+                } else { Swal.fire('Error', res.message, 'error'); }
+            } catch (err) { Swal.fire('Error', err.message, 'error'); }
+        });
+
+        async function downloadReport(status) {
+            Swal.fire({ title: 'กำลังเตรียมไฟล์...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            try {
+                const data = await callGasApi('getReportData', status);
+                if (!data || data.length === 0) return Swal.fire('แจ้งเตือน', `ไม่มีข้อมูลผู้${status}การทดสอบในระบบ`, 'info');
+
+                const aoa = [
+                    [`ประกาศรายชื่อกำลังพลผู้${status}การทดสอบความรู้ในการปฏิบัติงานด้านกำลังพลผ่านระบบออนไลน์`],
+                    ["ลำดับ", "ยศ", "ชื่อ", "นามสกุล", "หน่วย", "สังกัด", "ตำแหน่งปกติ", "คะแนน", "ร้อยละ", "วันที่ออกใบประกาศ", "วันหมดอายุ"]
+                ];
+                // ดึงข้อมูลตามลำดับคอลัมน์ A-R ของ Google Sheets (0 = Timestamp, 1 = Email, 3 = Rank, 4 = Firstname, 5 = Lastname, 6 = Unit, 7 = Affiliation, 8 = RegPos, 10 = Score, 11 = Perc, 13 = Issue, 14 = Expire)
+                data.forEach((r, i) => aoa.push([i + 1, r[3], r[4], r[5], r[6], r[7], r[8], r[10], r[11], r[13], r[14]]));
+                const ws = XLSX.utils.aoa_to_sheet(aoa);
+                ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 10 } }];
+                ws['!cols'] = [{ wch: 6 }, { wch: 12 }, { wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 15 }, { wch: 25 }, { wch: 10 }, { wch: 10 }, { wch: 15 }, { wch: 15 }];
+                const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, `ผู้${status}ทดสอบ`);
+                XLSX.writeFile(wb, `R-POST_Report_${status}.xlsx`);
+                Swal.fire('สำเร็จ', 'ดาวน์โหลดไฟล์แล้ว', 'success');
+            } catch (err) { Swal.fire('Error', err.message, 'error'); }
+        }
+
+        const today = new Date();
+        const thaiMonths = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+        document.getElementById('announceDate').innerText = `${today.getDate()} ${thaiMonths[today.getMonth()]} ${today.getFullYear() + 543}`;
+
+        document.getElementById('importEligibleExcel').addEventListener('change', function (e) {
+            const file = e.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (evt) {
+                const data = evt.target.result; const workbook = XLSX.read(data, { type: 'binary' });
+                const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
+                if (json.length < 2) return Swal.fire('ผิดพลาด', 'ไฟล์ Excel ไม่มีข้อมูล', 'error');
+                let html = '';
+                json.forEach((row, index) => {
+                    if (row.length === 0) return;
+                    if (index === 0) { html += '<thead><tr>'; row.forEach(cell => html += `<th>${cell || ''}</th>`); html += '</tr></thead><tbody>'; }
+                    else { html += '<tr>'; row.forEach(cell => html += `<td>${cell || ''}</td>`); html += '</tr>'; }
+                });
+                html += '</tbody>';
+                document.getElementById('announcementTableContent').innerHTML = html;
+                document.getElementById('announcePlaceholder').classList.add('hidden');
+                document.getElementById('announcementPaper').classList.remove('hidden'); document.getElementById('announcementPaper').classList.add('tab-content');
+                document.getElementById('eligibleActionBtns').classList.remove('hidden'); document.getElementById('eligibleActionBtns').classList.add('flex');
+            };
+            reader.readAsBinaryString(file);
+        });
+
+        function exportAnnouncementImage() {
+            Swal.fire({ title: 'กำลังสร้างรูปภาพ...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            html2canvas(document.getElementById('announcementPaper'), { scale: 2, useCORS: true }).then(canvas => {
+                const link = document.createElement('a'); link.download = 'ประกาศผู้มีสิทธิ์สอบ.png'; link.href = canvas.toDataURL('image/png'); link.click(); Swal.close();
+            }).catch(() => Swal.fire('ผิดพลาด', 'ไม่สามารถสร้างรูปภาพได้', 'error'));
+        }
+
+        function exportAnnouncementPDF() {
+            Swal.fire({ title: 'กำลังสร้างไฟล์ PDF...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            html2canvas(document.getElementById('announcementPaper'), { scale: 2, useCORS: true }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png'); const pdf = new window.jspdf.jsPDF('p', 'mm', 'a4');
+                const pdfWidth = pdf.internal.pageSize.getWidth(), pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                let heightLeft = pdfHeight, position = 0;
+                pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight); heightLeft -= pdf.internal.pageSize.getHeight();
+                while (heightLeft >= 0) { position = heightLeft - pdf.internal.pageSize.getHeight(); pdf.addPage(); pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight); heightLeft -= pdf.internal.pageSize.getHeight(); }
+                pdf.save('ประกาศผู้มีสิทธิ์สอบ.pdf'); Swal.close();
+            }).catch(() => Swal.fire('ผิดพลาด', 'ไม่สามารถสร้าง PDF ได้', 'error'));
+        }
+
+        function toggleAuthMode() {
+            const loginF = document.getElementById('loginForm'), regF = document.getElementById('registerForm');
+            if (loginF.classList.contains('hidden')) {
+                regF.classList.add('hidden'); regF.classList.remove('tab-content');
+                loginF.classList.remove('hidden'); void loginF.offsetWidth; loginF.classList.add('tab-content');
+            } else {
+                loginF.classList.add('hidden'); loginF.classList.remove('tab-content');
+                regF.classList.remove('hidden'); void regF.offsetWidth; regF.classList.add('tab-content');
+            }
+        }
+
+        function loginSuccess(email, isAdmin = false, unit = "") {
+            currentUserEmail = email;
+            sessionStorage.setItem('rpost_user', email); sessionStorage.setItem('rpost_isadmin', isAdmin ? 'true' : 'false');
+            if (unit) sessionStorage.setItem('rpost_unit', unit);
+
+            document.getElementById('authApp').classList.add('hidden');
+            const mainApp = document.getElementById('mainApp');
+            mainApp.classList.remove('hidden'); void mainApp.offsetWidth; mainApp.classList.add('tab-content');
+
+            document.getElementById('email').value = email; document.getElementById('bulkEmail').value = email;
+            const userUnit = unit || sessionStorage.getItem('rpost_unit');
+            if (userUnit) { setTimeout(() => { if (document.getElementById('unit')) document.getElementById('unit').value = userUnit; if (document.getElementById('bulkUnit')) document.getElementById('bulkUnit').value = userUnit; }, 500); }
+
+            if (isAdmin || sessionStorage.getItem('rpost_isadmin') === 'true') { document.getElementById('btnTabBulk').classList.remove('hidden'); }
+            else { document.getElementById('btnTabBulk').classList.add('hidden'); document.getElementById('btnTabIndividual').click(); }
+            fetchUserHistory();
+        }
+
+        function logoutUser() { sessionStorage.clear(); location.reload(); }
+
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value, pass = document.getElementById('loginPass').value, loginUnit = document.getElementById('loginUnit').value;
+            Swal.fire({ title: 'กำลังตรวจสอบ...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            try {
+                const res = await callGasApi('loginUser', { email, password: pass });
+                if (res.success) { Swal.close(); const unitToUse = res.unit && res.unit !== "-" ? res.unit : loginUnit; loginSuccess(email, res.isAdmin, unitToUse); }
+                else { Swal.fire('ผิดพลาด', res.message, 'error'); }
+            } catch (err) { Swal.fire('Error', err.message, 'error'); }
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const email = document.getElementById('regEmail').value, pass = document.getElementById('regPass').value, unit = document.getElementById('regUnit').value;
+            if (pass !== document.getElementById('regPassConfirm').value) return Swal.fire('ผิดพลาด', 'รหัสผ่านไม่ตรงกัน', 'warning');
+            if (pass.length < 6) return Swal.fire('ผิดพลาด', 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร', 'warning');
+
+            Swal.fire({ title: 'กำลังสร้างบัญชี...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            try {
+                const res = await callGasApi('registerUser', { email, password: pass, unit });
+                if (res.success) { Swal.fire({ icon: 'success', title: 'สมัครสำเร็จ', showConfirmButton: false, timer: 1500 }); setTimeout(() => loginSuccess(email, false, unit), 1500); }
+                else { Swal.fire('ผิดพลาด', res.message, 'error'); }
+            } catch (err) { Swal.fire('Error', err.message, 'error'); }
+        });
+
+        async function fetchUserHistory() {
+            if (!currentUserEmail) return;
+            try {
+                const data = await callGasApi('getUserHistory', currentUserEmail);
+                if (!data) return;
+                currentUserHistoryData = [...data];
+                let html = '', hasCertCount = 0, noCertCount = 0;
+
+                if (data.length === 0) {
+                    html = `<tr><td colspan="9" class="px-5 py-8 text-center text-gray-400">ยังไม่มีประวัติการบันทึกข้อมูล</td></tr>`;
+                } else {
+                    const displayData = [...data].reverse();
+                    displayData.forEach(row => {
+                        const dateStr = new Date(row[0]).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                        const status = row[12];
+                        if (status === 'ไม่มีใบประกาศ') noCertCount++; else hasCertCount++;
+                        let statusClass = (status === 'ผ่าน') ? 'bg-green-100 text-green-800' : (status === 'ไม่ผ่าน') ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800';
+
+                        html += `<tr class="border-b hover:bg-gray-50 transition-colors">
+                            <td class="px-4 py-4 whitespace-nowrap">${dateStr}</td>
+                            <td class="px-4 py-4 whitespace-nowrap">${row[2]}</td>
+                            <td class="px-4 py-4 whitespace-nowrap font-medium text-gray-900">${row[3]} ${row[4]} ${row[5]}</td>
+                            <td class="px-4 py-4 whitespace-nowrap">${row[6]}<br><span class="text-xs text-gray-500">${row[7]}</span></td>
+                            <td class="px-4 py-4 whitespace-nowrap text-xs">${row[8]}</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-xs">${row[9]}</td>
+                            <td class="px-4 py-4 text-center whitespace-nowrap">${status === 'ไม่มีใบประกาศ' ? '-' : `${row[10]} (${row[11]}%)`}</td>
+                            <td class="px-4 py-4 text-center whitespace-nowrap"><span class="px-3 py-1 text-xs rounded-full font-bold ${statusClass}">${status}</span></td>
+                            <td class="px-4 py-4 whitespace-nowrap">${status === 'ไม่มีใบประกาศ' ? '-' : row[14]}</td>
+                        </tr>`;
+                    });
+                }
+                document.getElementById('historyTableBody').innerHTML = html; document.getElementById('statTotal').innerText = data.length; document.getElementById('statHasCert').innerText = hasCertCount; document.getElementById('statNoCert').innerText = noCertCount;
+            } catch (err) { console.error("History fetch error", err); }
+        }
+
+        function downloadUserHistory() {
+            if (currentUserHistoryData.length === 0) return Swal.fire('แจ้งเตือน', 'ท่านยังไม่มีประวัติการบันทึกข้อมูลในระบบ', 'info');
+            Swal.fire({ title: 'กำลังเตรียมไฟล์...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            const aoa = [[`ประวัติการบันทึกข้อมูลกำลังพล (ผู้ใช้: ${currentUserEmail})`], ["วัน/เวลา", "อีเมล", "เลขบัตร ปชช.", "ยศ", "ชื่อ", "นามสกุล", "หน่วย", "สังกัด", "ตำแหน่งปกติ", "ตำแหน่งในสนาม", "คะแนน", "ร้อยละ", "สถานะ", "วันที่ออก", "วันหมดอายุ"]];
+            [...currentUserHistoryData].reverse().forEach(row => aoa.push([row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14]]));
+            const ws = XLSX.utils.aoa_to_sheet(aoa); ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 14 } }];
+            ws['!cols'] = [{ wch: 18 }, { wch: 25 }, { wch: 15 }, { wch: 10 }, { wch: 15 }, { wch: 15 }, { wch: 12 }, { wch: 15 }, { wch: 20 }, { wch: 20 }, { wch: 8 }, { wch: 8 }, { wch: 10 }, { wch: 12 }, { wch: 12 }];
+            const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, `My History`); XLSX.writeFile(wb, `My_History.xlsx`); Swal.fire('สำเร็จ', 'ดาวน์โหลดไฟล์ Excel แล้ว', 'success');
+        }
+
+        function printUserHistory() {
+            if (currentUserHistoryData.length === 0) return Swal.fire('แจ้งเตือน', 'ไม่มีประวัติ', 'info');
+            let printWindow = window.open('', '_blank'); let today = new Date(); let thaiMonths = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+            let printDate = `${today.getDate()} ${thaiMonths[today.getMonth()]} ${today.getFullYear() + 543} เวลา ${String(today.getHours()).padStart(2, '0')}:${String(today.getMinutes()).padStart(2, '0')} น.`;
+            let tableHtml = `<table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12pt;"><thead><tr style="background-color: #f3f4f6;"><th style="border: 1px solid #666; padding: 10px; text-align: left;">วัน/เวลา</th><th style="border: 1px solid #666; padding: 10px; text-align: left;">เลข ปชช.</th><th style="border: 1px solid #666; padding: 10px; text-align: left;">ยศ ชื่อ-นามสกุล</th><th style="border: 1px solid #666; padding: 10px; text-align: left;">หน่วย/สังกัด/ตำแหน่ง</th><th style="border: 1px solid #666; padding: 10px; text-align: center;">คะแนน</th><th style="border: 1px solid #666; padding: 10px; text-align: center;">สถานะ</th></tr></thead><tbody>`;
+            [...currentUserHistoryData].reverse().forEach(row => {
+                let dateStr = new Date(row[0]).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                tableHtml += `<tr><td style="border: 1px solid #666; padding: 10px;">${dateStr}</td><td style="border: 1px solid #666; padding: 10px;">${row[2]}</td><td style="border: 1px solid #666; padding: 10px;">${row[3]} ${row[4]} ${row[5]}</td><td style="border: 1px solid #666; padding: 10px;">${row[6]}<br><span style="font-size: 10pt; color: #555;">${row[7]}<br>${row[8]}<br>${row[9]}</span></td><td style="border: 1px solid #666; padding: 10px; text-align: center;">${row[12] === 'ไม่มีใบประกาศ' ? '-' : `${row[10]} (${row[11]}%)`}</td><td style="border: 1px solid #666; padding: 10px; text-align: center;">${row[12]}</td></tr>`;
+            });
+            tableHtml += `</tbody></table>`;
+            let html = `<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><title>พิมพ์ประวัติการบันทึกข้อมูล</title><link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet"><style>body { font-family: 'Sarabun', sans-serif; padding: 30px; color: #000; } h2 { text-align: center; margin-bottom: 5px; font-size: 20pt; } p.sub-head { text-align: center; margin-top: 0; color: #444; font-size: 14pt; } .info-box { margin-top: 30px; font-size: 12pt; margin-bottom: 15px; } @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } button { display: none; } }</style></head><body><h2>รายงานประวัติการบันทึกข้อมูลกำลังพล</h2><p class="sub-head">ระบบทดสอบความรู้ในการปฏิบัติงานด้านกำลังพล (R-POST)</p><div class="info-box"><strong>บัญชีผู้ใช้งาน:</strong> ${currentUserEmail}<br><strong>ข้อมูลพิมพ์เมื่อ:</strong> ${printDate}<br><strong>จำนวนรายการทั้งหมด:</strong> ${currentUserHistoryData.length} รายการ</div>${tableHtml}<div style="margin-top: 40px; text-align: center; font-size: 11pt; color: #777;">- สิ้นสุดรายงาน -</div><script>setTimeout(function() { window.print(); }, 800);<\/script></body></html>`;
+            printWindow.document.open(); printWindow.document.write(html); printWindow.document.close();
+        }
+    </script>
+</body>
+
+</html>
