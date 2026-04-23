@@ -116,16 +116,22 @@
         .dark th,
         .dark td,
         .dark div {
-            color: #e2e8f0;
+            color: #ffffff !important;
         }
 
         .dark .text-blue-800,
         .dark .text-blue-900,
+        .dark .text-gray-400,
         .dark .text-gray-500,
         .dark .text-gray-600,
+        .dark .text-gray-700,
         .dark .text-gray-800,
         .dark .text-gray-900 {
             color: #f1f5f9 !important;
+        }
+
+        .dark input::placeholder {
+            color: #94a3b8 !important;
         }
 
         .dark .border-gray-200,
@@ -139,6 +145,13 @@
         .dark table tr:hover {
             background-color: rgba(51, 65, 85, 0.5) !important;
         }
+
+        /* Dark Mode Color Adjustments for better visibility */
+        .dark .text-indigo-700 { color: #818cf8 !important; }
+        .dark .text-emerald-600 { color: #34d399 !important; }
+        .dark .text-rose-600 { color: #fb7185 !important; }
+        .dark .text-amber-600 { color: #fbbf24 !important; }
+        .dark .text-blue-700 { color: #60a5fa !important; }
 
         .dark .bg-gradient-to-r.from-blue-50.to-indigo-50 {
             background: linear-gradient(to right, #1e293b, #0f172a) !important;
