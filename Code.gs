@@ -61,13 +61,11 @@ function doPost(e) {
 
 // ==========================================
 // ส่วนที่ 1: การจัดการผู้ใช้ และ รายชื่อหน่วย
-// ==========================================
-
 // ดึงรายชื่อหน่วย
 function getUnitList() {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = ss.getSheetByName(BULK_SHEET_NAME);
-  if (!sheet) return ["หน่วยทดสอบ 1", "หน่วยทดสอบ 2"]; // กรณีไม่มีชีตให้คืนค่าเริ่มต้น
+  if (!sheet || sheet.getLastRow() < 2) return ["หน่วยทดสอบ 1", "หน่วยทดสอบ 2"];
   
   const data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 1).getValues();
   return data.map(r => r[0]).filter(String);
@@ -75,21 +73,21 @@ function getUnitList() {
 
 // ระบบเข้าสู่ระบบ
 function loginUser(data) {
-  const email = data.email.trim();
+  const email = data.email.trim().toLowerCase();
   const password = data.password;
   
-  // กำหนดสิทธิ์ Admin หากอีเมลมีคำว่า admin (สามารถแก้เป็นการตรวจสอบจากฐานข้อมูลได้)
-  const isAdmin = email.toLowerCase().includes('admin');
+  // กำหนดสิทธิ์ Admin หากอีเมลมีคำว่า admin
+  const isAdmin = email.includes('admin');
   
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = ss.getSheetByName(USERS_SHEET_NAME);
   
-  // ถ้ายกตัวอย่างยังไม่มีชีต
-  if (!sheet) return { success: true, message: "เข้าสู่ระบบจำลองสำเร็จ", isAdmin: isAdmin, unit: "ไม่ระบุ" };
+  if (!sheet) return { success: false, message: "ไม่พบฐานข้อมูลผู้ใช้งาน" };
   
   const rows = sheet.getDataRange().getValues();
   for (let i = 1; i < rows.length; i++) {
-    if (rows[i][0] === email && rows[i][1] === password) {
+    const dbEmail = rows[i][0] ? rows[i][0].toString().trim().toLowerCase() : "";
+    if (dbEmail === email && rows[i][1].toString() === password.toString()) {
       return { success: true, message: "เข้าสู่ระบบสำเร็จ", isAdmin: isAdmin, unit: rows[i][2] || "-" };
     }
   }
