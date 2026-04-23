@@ -446,14 +446,12 @@
         .dark ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); }
 
     </style>
-</head>
-
-<body class="bg-ocean min-h-screen flex flex-col items-center justify-center py-10 px-4 sm:px-6 lg:px-8">
+</head><body class="bg-ocean min-h-screen flex flex-col items-center justify-start py-6 sm:py-12 px-4 sm:px-6 lg:px-8 transition-all duration-700 overflow-x-hidden">
 
     <!-- Settings FAB -->
     <button onclick="toggleSettings()"
-        class="fixed top-6 right-6 z-50 bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 p-3 rounded-full shadow-lg hover:shadow-xl hover:rotate-90 transition-all duration-300">
-        <i class="fas fa-cog text-xl"></i>
+        class="fixed bottom-6 right-6 z-50 bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 p-4 rounded-full shadow-2xl border-2 border-blue-500/50 hover:shadow-blue-500/20 hover:rotate-90 transition-all duration-500 no-print group">
+        <i class="fas fa-cog text-2xl group-hover:text-blue-400"></i>
     </button>
 
     <!-- Settings Modal -->
@@ -474,11 +472,13 @@
                         (Theme)</label>
                     <div class="grid grid-cols-2 gap-3">
                         <button onclick="setTheme('light')" id="btnLightMode"
-                            class="py-2 px-3 border-2 border-blue-500 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors">สว่าง
-                            (Light)</button>
+                            class="flex items-center justify-center py-2.5 px-3 border-2 border-blue-500 rounded-xl text-sm font-bold text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 transition-all">
+                            <i class="fas fa-sun mr-2 text-amber-500"></i> สว่าง (Light)
+                        </button>
                         <button onclick="setTheme('dark')" id="btnDarkMode"
-                            class="py-2 px-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">มืด
-                            (Dark)</button>
+                            class="flex items-center justify-center py-2.5 px-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl text-sm font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
+                            <i class="fas fa-moon mr-2 text-indigo-400"></i> มืด (Dark)
+                        </button>
                     </div>
                 </div>
 
@@ -1670,12 +1670,12 @@
         setBackground(savedBg);
 
     </script>
-    <footer class="mt-10 mb-8 text-gray-500 text-sm font-medium animate-bounce-slow flex justify-center no-print">
-        <div class="flex items-center gap-2 glass px-6 py-2 rounded-full shadow-sm border border-gray-200">
+    <footer class="mt-auto py-8 text-gray-500 text-sm font-medium animate-bounce-slow flex justify-center no-print w-full">
+        <div class="flex items-center gap-2 glass px-6 py-2.5 rounded-full shadow-lg border border-gray-200/50 backdrop-blur-md">
             <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-            Dev By <span class="text-blue-700 font-bold">SPK</span>
+            Dev By <span class="text-blue-700 dark:text-blue-400 font-bold">SPK</span>
             <span class="mx-2 text-gray-300">|</span>
-            <span>R-POST v2.1.0</span>
+            <span>R-POST v2.2.0</span>
         </div>
     </footer>
 
