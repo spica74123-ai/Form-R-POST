@@ -1543,38 +1543,54 @@
             const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, `My History`); XLSX.writeFile(wb, `My_History.xlsx`); Swal.fire('สำเร็จ', 'ดาวน์โหลดไฟล์ Excel แล้ว', 'success');
         }
 
+        function toThaiDigits(num) {
+            if (num === null || num === undefined) return "";
+            const thaiDigits = ["๐", "๑", "๒", "๓", "๔", "๕", "๖", "๗", "๘", "๙"];
+            return num.toString().replace(/\d/g, (d) => thaiDigits[d]);
+        }
+
         function printUserHistory() {
             if (currentUserHistoryData.length === 0) return Swal.fire('แจ้งเตือน', 'ไม่มีประวัติ', 'info');
             let printWindow = window.open('', '_blank');
             let today = new Date();
             let thaiMonths = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
-            let printDate = `${today.getDate()} ${thaiMonths[today.getMonth()]} ${today.getFullYear() + 543} เวลา ${String(today.getHours()).padStart(2, '0')}:${String(today.getMinutes()).padStart(2, '0')} น.`;
+            
+            // ข้อมูลหัวรายงาน
+            const titleLine1 = "ประกาศรายชื่อกำลังพลผู้ผ่านการทดสอบความรู้ในการปฏิบัติงานด้านกำลังพลผ่านระบบออนไลน์";
+            const titleLine2 = `ประจำปีงบประมาณ ${toThaiDigits(today.getFullYear() + 543)} วงรอบที่ ${toThaiDigits(1)}`; // จำลองวงรอบ
+            const titleLine3 = "กลุ่มงานที่ ๑ กลุ่มงานการเตรียมพลและงานการจัดการกำลังพล";
 
-            let tableHtml = `<table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 11pt;">
+            let tableHtml = `<table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14pt; font-family: 'Sarabun', sans-serif;">
                 <thead>
-                    <tr style="background-color: #f3f4f6;">
-                        <th style="border: 1px solid #333; padding: 10px; text-align: center; width: 15%;">วัน/เวลา</th>
-                        <th style="border: 1px solid #333; padding: 10px; text-align: center; width: 15%;">เลข ปชช.</th>
-                        <th style="border: 1px solid #333; padding: 10px; text-align: left; width: 20%;">ยศ ชื่อ-นามสกุล</th>
-                        <th style="border: 1px solid #333; padding: 10px; text-align: left; width: 15%;">หน่วย</th>
-                        <th style="border: 1px solid #333; padding: 10px; text-align: left; width: 15%;">สังกัด</th>
-                        <th style="border: 1px solid #333; padding: 10px; text-align: center; width: 10%;">คะแนน (%)</th>
-                        <th style="border: 1px solid #333; padding: 10px; text-align: center; width: 10%;">สถานะ</th>
+                    <tr style="background-color: #38761d; color: #ffffff;">
+                        <th style="border: 1px solid #000; padding: 6px; text-align: center; width: 5%;">ลำดับ</th>
+                        <th style="border: 1px solid #000; padding: 6px; text-align: center; width: 10%;">ยศ</th>
+                        <th style="border: 1px solid #000; padding: 6px; text-align: center; width: 15%;">ชื่อ</th>
+                        <th style="border: 1px solid #000; padding: 6px; text-align: center; width: 15%;">นามสกุล</th>
+                        <th style="border: 1px solid #000; padding: 6px; text-align: center; width: 15%;">สังกัด</th>
+                        <th style="border: 1px solid #000; padding: 6px; text-align: center; width: 10%;">นขต.ทบ.</th>
+                        <th style="border: 1px solid #000; padding: 6px; text-align: center; width: 10%;">คะแนน</th>
+                        <th style="border: 1px solid #000; padding: 6px; text-align: center; width: 10%;">ร้อยละ</th>
+                        <th style="border: 1px solid #000; padding: 6px; text-align: center; width: 10%;">สถานะ</th>
                     </tr>
                 </thead>
                 <tbody>`;
 
-            [...currentUserHistoryData].reverse().forEach(row => {
-                let dateStr = new Date(row[0]).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-                let scoreText = row[12] === 'ไม่มีใบประกาศ' ? '-' : `${row[10]} (${row[11]}%)`;
+            [...currentUserHistoryData].reverse().forEach((row, idx) => {
+                const status = row[12];
+                const score = row[10] ? toThaiDigits(row[10]) : "-";
+                const percentage = row[11] ? toThaiDigits(row[11]) : "-";
+                
                 tableHtml += `<tr>
-                    <td style="border: 1px solid #333; padding: 10px; text-align: center;">${dateStr}</td>
-                    <td style="border: 1px solid #333; padding: 10px; text-align: center;">${row[2]}</td>
-                    <td style="border: 1px solid #333; padding: 10px;">${row[3]} ${row[4]} ${row[5]}</td>
-                    <td style="border: 1px solid #333; padding: 10px;">${row[6]}</td>
-                    <td style="border: 1px solid #333; padding: 10px;">${row[7]}</td>
-                    <td style="border: 1px solid #333; padding: 10px; text-align: center;">${scoreText}</td>
-                    <td style="border: 1px solid #333; padding: 10px; text-align: center;">${row[12]}</td>
+                    <td style="border: 1px solid #000; padding: 6px; text-align: center;">${toThaiDigits(idx + 1)}</td>
+                    <td style="border: 1px solid #000; padding: 6px; text-align: center;">${row[3]}</td>
+                    <td style="border: 1px solid #000; padding: 6px;">${row[4]}</td>
+                    <td style="border: 1px solid #000; padding: 6px;">${row[5]}</td>
+                    <td style="border: 1px solid #000; padding: 6px; text-align: center;">${row[7] || '-'}</td>
+                    <td style="border: 1px solid #000; padding: 6px; text-align: center;">${row[6] || '-'}</td>
+                    <td style="border: 1px solid #000; padding: 6px; text-align: center;">${score}</td>
+                    <td style="border: 1px solid #000; padding: 6px; text-align: center;">${percentage}</td>
+                    <td style="border: 1px solid #000; padding: 6px; text-align: center;">${status}</td>
                 </tr>`;
             });
             tableHtml += `</tbody></table>`;
@@ -1583,14 +1599,15 @@
             <html lang="th">
             <head>
                 <meta charset="UTF-8">
-                <title>พิมพ์ประวัติการบันทึกข้อมูล</title>
+                <title>รายงาน R-POST</title>
                 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
                 <style>
-                    body { font-family: 'Sarabun', sans-serif; padding: 2cm; color: #000; line-height: 1.5; }
-                    h2 { text-align: center; margin-bottom: 5px; font-size: 18pt; font-weight: bold; }
-                    p.sub-head { text-align: center; margin-top: 0; color: #333; font-size: 14pt; }
-                    .info-box { margin-top: 20px; font-size: 12pt; margin-bottom: 20px; border: 1px solid #ddd; padding: 15px; border-radius: 8px; }
-                    .logo-print { display: block; height: 80px; width: auto; margin: 0 auto 15px; }
+                    body { font-family: 'Sarabun', sans-serif; padding: 1.5cm; color: #000; line-height: 1.2; }
+                    .header-container { text-align: center; margin-bottom: 20px; }
+                    .title-1 { font-size: 18pt; font-weight: bold; margin-bottom: 5px; }
+                    .title-2 { font-size: 16pt; font-weight: bold; margin-bottom: 5px; }
+                    .title-3 { font-size: 16pt; font-weight: bold; margin-bottom: 15px; }
+                    .logo-print { display: block; height: 100px; width: auto; margin: 0 auto 15px; }
                     @media print {
                         body { padding: 0; }
                         @page { size: A4; margin: 1.5cm; }
@@ -1599,20 +1616,16 @@
                 </style>
             </head>
             <body>
-                <div style="text-align: center;">
-                    <img src="assets/logo.png" class="logo-print">
-                </div>
-                <h2>รายงานประวัติการบันทึกข้อมูลกำลังพล</h2>
-                <p class="sub-head">ระบบทดสอบความรู้ในการปฏิบัติงานด้านกำลังพล (R-POST)</p>
-                <div class="info-box">
-                    <strong>บัญชีผู้ใช้งาน:</strong> ${currentUserEmail}<br>
-                    <strong>ข้อมูลพิมพ์เมื่อ:</strong> ${printDate}<br>
-                    <strong>จำนวนรายการทั้งหมด:</strong> ${currentUserHistoryData.length} รายการ
+                <div class="header-container">
+                    <img src="assets/logo2.png" class="logo-print">
+                    <div class="title-1">${titleLine1}</div>
+                    <div class="title-2">${titleLine2}</div>
+                    <div class="title-3">${titleLine3}</div>
                 </div>
 
                 ${tableHtml}
-                <div style="margin-top: 40px; text-align: center; font-size: 10pt; color: #666;">
-                    - เอกสารนี้สร้างขึ้นโดยระบบอัตโนมัติ -
+                <div style="margin-top: 40px; text-align: center; font-size: 12pt; color: #333;">
+                    ข้อมูล ณ วันที่ ${toThaiDigits(today.getDate())} ${thaiMonths[today.getMonth()]} ${toThaiDigits(today.getFullYear() + 543)}
                 </div>
                 <script>
                     window.onload = function() {
@@ -1625,6 +1638,7 @@
             printWindow.document.write(html);
             printWindow.document.close();
         }
+
         // ==========================================
         // Theme & Background Switcher Logic
         // ==========================================
