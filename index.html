@@ -145,6 +145,15 @@
             border-color: #3b82f6 !important;
         }
 
+        /* Button Border Consistency */
+        .btn-hover {
+            border-width: 2px !important;
+        }
+
+        .dark .btn-hover {
+            border-color: rgba(255, 255, 255, 0.3) !important;
+        }
+
         @keyframes gradientBG {
             0% {
                 background-position: 0% 50%;
@@ -451,7 +460,7 @@
                     <input type="password" id="loginPass" required class="input-field" placeholder="••••••••">
                 </div>
                 <button type="submit"
-                    class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-md text-lg font-bold text-white bg-gradient-to-r from-blue-700 to-blue-900 hover:from-blue-800 hover:to-blue-950 transform hover:-translate-y-1 transition-all duration-300 mt-6 btn-hover">
+                    class="w-full flex justify-center items-center py-3 px-4 border-2 border-blue-400/50 rounded-lg shadow-md text-lg font-bold text-white bg-gradient-to-r from-blue-700 to-blue-900 hover:from-blue-800 hover:to-blue-950 transform hover:-translate-y-1 transition-all duration-300 mt-6 btn-hover">
                     <i class="fas fa-sign-in-alt mr-2"></i> เข้าสู่ระบบ
                 </button>
                 <p class="text-center text-sm text-gray-500 mt-4">ยังไม่มีบัญชี? <a href="#" onclick="toggleAuthMode()"
@@ -478,7 +487,7 @@
                     <input type="password" id="regPassConfirm" required class="input-field" placeholder="••••••••">
                 </div>
                 <button type="submit"
-                    class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-md text-lg font-bold text-white bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 transform hover:-translate-y-1 transition-all duration-300 mt-6 btn-hover">
+                    class="w-full flex justify-center items-center py-3 px-4 border-2 border-green-400/50 rounded-lg shadow-md text-lg font-bold text-white bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 transform hover:-translate-y-1 transition-all duration-300 mt-6 btn-hover">
                     <i class="fas fa-user-plus mr-2"></i> สมัครสมาชิก
                 </button>
                 <p class="text-center text-sm text-gray-500 mt-4">มีบัญชีแล้ว? <a href="#" onclick="toggleAuthMode()"
@@ -496,7 +505,7 @@
             <div class="absolute -right-20 -top-20 w-64 h-64 bg-blue-600 rounded-full opacity-30 blur-3xl"></div>
             <div class="absolute -left-20 -bottom-20 w-64 h-64 bg-blue-900 rounded-full opacity-30 blur-3xl"></div>
             <button onclick="logoutUser()"
-                class="absolute top-4 right-4 bg-red-500/20 hover:bg-red-600 border border-red-400/50 hover:border-transparent text-white text-xs px-4 py-2 rounded-full shadow-sm flex items-center transition-all duration-300 z-20 backdrop-blur-sm">
+                class="absolute top-4 right-4 bg-red-500/20 hover:bg-red-600 border-2 border-red-400/80 text-white text-xs px-4 py-2 rounded-full shadow-sm flex items-center transition-all duration-300 z-20 backdrop-blur-sm">
                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
@@ -581,7 +590,7 @@
                 </div>
                 <div class="pt-6">
                     <button type="submit"
-                        class="w-full flex justify-center items-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 transform hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+                        class="w-full flex justify-center items-center py-4 px-4 border-2 border-green-400/50 rounded-xl shadow-lg text-lg font-bold text-white bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 transform hover:-translate-y-1 hover:shadow-xl transition-all duration-300 btn-hover">
                         <i class="fas fa-paper-plane mr-2 animate__animated animate__pulse animate__infinite"></i>
                         ส่งไฟล์บัญชีรายชื่อหน่วย
                     </button>
@@ -732,7 +741,7 @@
 
                 <div class="pt-6">
                     <button type="submit"
-                        class="w-full flex justify-center items-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white bg-gradient-to-r from-blue-700 to-blue-800 hover:from-blue-800 hover:to-blue-900 transform hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+                        class="w-full flex justify-center items-center py-4 px-4 border-2 border-blue-400/50 rounded-xl shadow-lg text-lg font-bold text-white bg-gradient-to-r from-blue-700 to-blue-800 hover:from-blue-800 hover:to-blue-900 transform hover:-translate-y-1 hover:shadow-xl transition-all duration-300 btn-hover">
                         <i class="fas fa-save mr-2"></i> บันทึกข้อมูล
                     </button>
                 </div>
@@ -743,11 +752,11 @@
                     <h3 class="text-xl font-bold text-gray-800">ประวัติการบันทึกข้อมูลของท่าน</h3>
                     <div class="flex flex-wrap gap-2 w-full sm:w-auto">
                         <button type="button" onclick="printUserHistory()"
-                            class="flex-1 sm:flex-none flex items-center justify-center px-4 py-2 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 font-bold transition-transform hover:scale-105">
+                            class="flex-1 sm:flex-none flex items-center justify-center px-4 py-2 bg-indigo-600 border-2 border-indigo-400/50 text-white rounded-lg shadow-md hover:bg-indigo-700 font-bold transition-transform hover:scale-105 btn-hover">
                             <i class="fas fa-print mr-2"></i> พิมพ์ประวัติ
                         </button>
                         <button type="button" onclick="downloadUserHistory()"
-                            class="flex-1 sm:flex-none flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 font-bold transition-transform hover:scale-105">
+                            class="flex-1 sm:flex-none flex items-center justify-center px-4 py-2 bg-green-600 border-2 border-green-400/50 text-white rounded-lg shadow-md hover:bg-green-700 font-bold transition-transform hover:scale-105 btn-hover">
                             <i class="fas fa-file-excel mr-2"></i> โหลดประวัติ
                         </button>
                     </div>
@@ -840,13 +849,13 @@
             <h3 class="text-3xl font-bold text-gray-900">ประกาศรายชื่อผลการทดสอบ</h3>
             <div class="mt-10 flex flex-col sm:flex-row justify-center gap-6">
                 <button type="button" onclick="downloadReport('ผ่าน')"
-                    class="flex items-center justify-center px-8 py-4 shadow-lg text-lg font-bold rounded-xl text-white bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 transform hover:-translate-y-1 transition-all">
+                    class="flex items-center justify-center px-8 py-4 border-2 border-emerald-400/50 shadow-lg text-lg font-bold rounded-xl text-white bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 transform hover:-translate-y-1 transition-all btn-hover">
                     <i
                         class="fas fa-download mr-2 animate__animated animate__bounce animate__infinite animate__slower"></i>
                     ดาวน์โหลดรายชื่อ "ผ่าน"
                 </button>
                 <button type="button" onclick="downloadReport('ไม่ผ่าน')"
-                    class="flex items-center justify-center px-8 py-4 shadow-lg text-lg font-bold rounded-xl text-white bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 transform hover:-translate-y-1 transition-all">
+                    class="flex items-center justify-center px-8 py-4 border-2 border-rose-400/50 shadow-lg text-lg font-bold rounded-xl text-white bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 transform hover:-translate-y-1 transition-all btn-hover">
                     <i class="fas fa-download mr-2"></i> ดาวน์โหลดรายชื่อ "ไม่ผ่าน"
                 </button>
             </div>
@@ -916,7 +925,7 @@
                     class="p-6 border-b border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <h4 class="text-lg font-bold text-gray-800">รายชื่อกำลังพลที่ถูกบันทึก</h4>
                     <button onclick="downloadAdminReport()"
-                        class="w-full sm:w-auto px-5 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl shadow-md hover:bg-indigo-700 transition-all hover:-translate-y-0.5 flex items-center justify-center">
+                        class="w-full sm:w-auto px-5 py-2.5 bg-indigo-600 border-2 border-indigo-400/50 text-white text-sm font-bold rounded-xl shadow-md hover:bg-indigo-700 transition-all hover:-translate-y-0.5 flex items-center justify-center btn-hover">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
