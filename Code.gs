@@ -73,8 +73,10 @@ function getUnitList() {
 
 // ระบบเข้าสู่ระบบ
 function loginUser(data) {
+  if (!data.email || !data.password) return { success: false, message: "กรุณากรอกอีเมลและรหัสผ่าน" };
+  
   const email = data.email.trim().toLowerCase();
-  const password = data.password;
+  const password = data.password.toString().trim();
   
   // กำหนดสิทธิ์ Admin หากอีเมลมีคำว่า admin
   const isAdmin = email.includes('admin');
@@ -87,7 +89,9 @@ function loginUser(data) {
   const rows = sheet.getDataRange().getValues();
   for (let i = 1; i < rows.length; i++) {
     const dbEmail = rows[i][0] ? rows[i][0].toString().trim().toLowerCase() : "";
-    if (dbEmail === email && rows[i][1].toString() === password.toString()) {
+    const dbPassword = rows[i][1] ? rows[i][1].toString().trim() : "";
+    
+    if (dbEmail === email && dbPassword === password) {
       return { success: true, message: "เข้าสู่ระบบสำเร็จ", isAdmin: isAdmin, unit: rows[i][2] || "-" };
     }
   }

@@ -1061,7 +1061,7 @@
         // ==========================================
         // ⚠️ การตั้งค่าการเชื่อมต่อ API ของ VERCEL
         // ==========================================
-        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwXo50bnBFqNXhSTHJPJt65pPh2XaxpMGWf5_bkdSc_3Cf9IDXIREiSe3U4UANGfKVe/exec";
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzuG26ld_jskeGj3eRSlv9qTJITSO4-_xro6zHPlM9lf5FUaaSrCjsPJZuSaDV7Cup2/exec";
 
         async function callGasApi(action, dataPayload) {
             try {
@@ -1636,7 +1636,7 @@
                     .logo-print { display: block; height: 100px; width: auto; margin: 0 auto 15px; }
                     @media print {
                         body { padding: 0; }
-                        @page { size: A4; margin: 1.5cm; }
+                        @page { size: A4 landscape; margin: 1.5cm; }
                         .no-print { display: none; }
                     }
                 </style>
