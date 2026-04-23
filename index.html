@@ -16,6 +16,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
+    <link rel="icon" type="image/png" href="assets/logo.png">
 
     <style>
         body {
@@ -42,13 +43,14 @@
 
         /* Container Drop Animation */
         .form-container {
-            animation: dropIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: dropIn 1s cubic-bezier(0.16, 1, 0.3, 1);
+            border-top: 8px solid #1e40af;
         }
 
         @keyframes dropIn {
             from {
                 opacity: 0;
-                transform: translateY(-40px) scale(0.95);
+                transform: translateY(-50px) scale(0.9);
             }
 
             to {
@@ -59,13 +61,13 @@
 
         /* Smooth Tab Transition */
         .tab-content {
-            animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         @keyframes slideUpFade {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(30px);
             }
 
             to {
@@ -74,17 +76,37 @@
             }
         }
 
-        /* Input Glow Effect */
+        /* Input Field Styling - Clear and Beautiful */
         .input-field {
-            @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm px-4 py-2 border;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            @apply mt-1 block w-full rounded-lg border-2 border-gray-300 shadow-sm sm:text-sm px-4 py-3 outline-none;
+            transition: all 0.3s ease-in-out;
+            background-color: #ffffff;
         }
 
         .input-field:focus {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.2), 0 4px 6px -2px rgba(59, 130, 246, 0.1);
-            border-color: #3b82f6;
-            outline: none;
+            @apply border-blue-600 ring-4 ring-blue-100;
+            transform: scale(1.01);
+            background-color: #f8fbff;
+        }
+
+        .input-field:hover {
+            @apply border-gray-400;
+        }
+
+        /* Logo Animation */
+        .logo-main {
+            animation: logoEntrance 1.2s ease-out forwards, logoPulse 4s ease-in-out infinite 1.2s;
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.1));
+        }
+
+        @keyframes logoEntrance {
+            from { opacity: 0; transform: scale(0.5) rotate(-10deg); }
+            to { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+
+        @keyframes logoPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
         }
 
         /* Floating Animation for Icons */
@@ -93,52 +115,23 @@
         }
 
         @keyframes float {
-            0% {
-                transform: translateY(0px);
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        /* A4 Print Optimization */
+        @media print {
+            @page {
+                size: A4;
+                margin: 1.5cm;
             }
-
-            50% {
-                transform: translateY(-8px);
+            body {
+                background: white !important;
+                font-size: 12pt !important;
             }
-
-            100% {
-                transform: translateY(0px);
+            .no-print {
+                display: none !important;
             }
-        }
-
-        /* สไตล์สำหรับหน้ากระดาษประกาศ */
-        .a4-preview {
-            background: white;
-            padding: 40px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            margin: 20px auto;
-            max-width: 800px;
-            color: #000;
-            transition: transform 0.3s ease;
-        }
-
-        .a4-preview:hover {
-            transform: scale(1.01);
-        }
-
-        .announce-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            font-size: 14px;
-        }
-
-        .announce-table th,
-        .announce-table td {
-            border: 1px solid #333;
-            padding: 8px 12px;
-            text-align: left;
-        }
-
-        .announce-table th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-            text-align: center;
         }
     </style>
 </head>
@@ -149,10 +142,13 @@
     <!-- หน้าจอเข้าสู่ระบบ / สมัครสมาชิก (Auth) -->
     <!-- ========================================== -->
     <div id="authApp"
-        class="max-w-md w-full bg-white rounded-2xl shadow-2xl overflow-hidden form-container border-t-8 border-blue-800 z-10 my-auto">
-        <div class="bg-blue-800 px-6 py-8 text-center text-white relative overflow-hidden">
+        class="max-w-md w-full bg-white rounded-2xl shadow-2xl overflow-hidden form-container z-10 my-auto">
+        <div class="bg-blue-800 px-6 py-10 text-center text-white relative overflow-hidden">
             <div class="absolute -right-10 -top-10 w-32 h-32 bg-blue-600 rounded-full opacity-50 blur-xl"></div>
             <div class="absolute -left-10 -bottom-10 w-32 h-32 bg-blue-900 rounded-full opacity-50 blur-xl"></div>
+            
+            <img src="assets/logo.png" alt="Logo" class="h-28 w-auto mx-auto mb-4 logo-main relative z-10">
+            
             <h2 class="text-3xl font-bold uppercase tracking-wide relative z-10">R-POST System</h2>
             <p class="mt-2 text-sm text-blue-200 relative z-10">กรุณาเข้าสู่ระบบเพื่อใช้งาน</p>
         </div>
@@ -213,8 +209,8 @@
     <!-- แอปพลิเคชันหลัก -->
     <!-- ========================================== -->
     <div id="mainApp"
-        class="hidden max-w-6xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden form-container border-t-8 border-blue-800 my-auto">
-        <div class="bg-blue-800 px-6 py-8 text-center text-white relative overflow-hidden">
+        class="hidden max-w-6xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden form-container my-auto">
+        <div class="bg-blue-800 px-6 py-10 text-center text-white relative overflow-hidden">
             <div class="absolute -right-20 -top-20 w-64 h-64 bg-blue-600 rounded-full opacity-30 blur-3xl"></div>
             <div class="absolute -left-20 -bottom-20 w-64 h-64 bg-blue-900 rounded-full opacity-30 blur-3xl"></div>
             <button onclick="logoutUser()"
@@ -225,6 +221,9 @@
                     </path>
                 </svg> ออกจากระบบ
             </button>
+            
+            <img src="assets/logo.png" alt="Logo" class="h-28 w-auto mx-auto mb-4 logo-main relative z-10">
+            
             <h2 class="text-3xl sm:text-4xl font-bold uppercase tracking-wide relative z-10 drop-shadow-md">
                 ระบบบันทึกข้อมูลกำลังพล</h2>
             <p class="mt-3 text-sm sm:text-base text-blue-200 relative z-10 font-medium tracking-wide">
@@ -245,18 +244,8 @@
                     <li class="hover:text-blue-700 transition-colors"><b>เจ้าหน้าที่หน่วย:</b> เลือกแท็บ
                         "บันทึกรายบุคคล" เพื่อกรอกข้อมูล (ระบุสถานะใบประกาศฯ และแนบไฟล์ PDF) และสามารถโหลดประวัติได้
                     </li>
-                    <li class="hover:text-blue-700 transition-colors"><b>การออกประกาศ:</b> ใช้แท็บ
-                        "ประกาศผู้มีสิทธิ์สอบ" นำเข้า Excel เพื่อสร้างประกาศ (รูปภาพ/PDF) อัตโนมัติ</li>
                 </ul>
             </div>
-            <button type="button" onclick="downloadTemplate()"
-                class="inline-flex items-center px-5 py-2.5 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transform hover:-translate-y-0.5 transition-all text-sm font-bold whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                    </path>
-                </svg> ดาวน์โหลดแบบฟอร์ม
-            </button>
         </div>
 
         <!-- Tabs Navigation -->
@@ -977,16 +966,82 @@
 
         function printUserHistory() {
             if (currentUserHistoryData.length === 0) return Swal.fire('แจ้งเตือน', 'ไม่มีประวัติ', 'info');
-            let printWindow = window.open('', '_blank'); let today = new Date(); let thaiMonths = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+            let printWindow = window.open('', '_blank');
+            let today = new Date();
+            let thaiMonths = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
             let printDate = `${today.getDate()} ${thaiMonths[today.getMonth()]} ${today.getFullYear() + 543} เวลา ${String(today.getHours()).padStart(2, '0')}:${String(today.getMinutes()).padStart(2, '0')} น.`;
-            let tableHtml = `<table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12pt;"><thead><tr style="background-color: #f3f4f6;"><th style="border: 1px solid #666; padding: 10px; text-align: left;">วัน/เวลา</th><th style="border: 1px solid #666; padding: 10px; text-align: left;">เลข ปชช.</th><th style="border: 1px solid #666; padding: 10px; text-align: left;">ยศ ชื่อ-นามสกุล</th><th style="border: 1px solid #666; padding: 10px; text-align: left;">หน่วย/สังกัด/ตำแหน่ง</th><th style="border: 1px solid #666; padding: 10px; text-align: center;">คะแนน</th><th style="border: 1px solid #666; padding: 10px; text-align: center;">สถานะ</th></tr></thead><tbody>`;
+
+            let tableHtml = `<table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 11pt;">
+                <thead>
+                    <tr style="background-color: #f3f4f6;">
+                        <th style="border: 1px solid #333; padding: 10px; text-align: center; width: 15%;">วัน/เวลา</th>
+                        <th style="border: 1px solid #333; padding: 10px; text-align: center; width: 15%;">เลข ปชช.</th>
+                        <th style="border: 1px solid #333; padding: 10px; text-align: left; width: 20%;">ยศ ชื่อ-นามสกุล</th>
+                        <th style="border: 1px solid #333; padding: 10px; text-align: left; width: 15%;">หน่วย</th>
+                        <th style="border: 1px solid #333; padding: 10px; text-align: left; width: 15%;">สังกัด</th>
+                        <th style="border: 1px solid #333; padding: 10px; text-align: center; width: 10%;">คะแนน (%)</th>
+                        <th style="border: 1px solid #333; padding: 10px; text-align: center; width: 10%;">สถานะ</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
             [...currentUserHistoryData].reverse().forEach(row => {
                 let dateStr = new Date(row[0]).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-                tableHtml += `<tr><td style="border: 1px solid #666; padding: 10px;">${dateStr}</td><td style="border: 1px solid #666; padding: 10px;">${row[2]}</td><td style="border: 1px solid #666; padding: 10px;">${row[3]} ${row[4]} ${row[5]}</td><td style="border: 1px solid #666; padding: 10px;">${row[6]}<br><span style="font-size: 10pt; color: #555;">${row[7]}<br>${row[8]}<br>${row[9]}</span></td><td style="border: 1px solid #666; padding: 10px; text-align: center;">${row[12] === 'ไม่มีใบประกาศ' ? '-' : `${row[10]} (${row[11]}%)`}</td><td style="border: 1px solid #666; padding: 10px; text-align: center;">${row[12]}</td></tr>`;
+                let scoreText = row[12] === 'ไม่มีใบประกาศ' ? '-' : `${row[10]} (${row[11]}%)`;
+                tableHtml += `<tr>
+                    <td style="border: 1px solid #333; padding: 10px; text-align: center;">${dateStr}</td>
+                    <td style="border: 1px solid #333; padding: 10px; text-align: center;">${row[2]}</td>
+                    <td style="border: 1px solid #333; padding: 10px;">${row[3]} ${row[4]} ${row[5]}</td>
+                    <td style="border: 1px solid #333; padding: 10px;">${row[6]}</td>
+                    <td style="border: 1px solid #333; padding: 10px;">${row[7]}</td>
+                    <td style="border: 1px solid #333; padding: 10px; text-align: center;">${scoreText}</td>
+                    <td style="border: 1px solid #333; padding: 10px; text-align: center;">${row[12]}</td>
+                </tr>`;
             });
             tableHtml += `</tbody></table>`;
-            let html = `<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><title>พิมพ์ประวัติการบันทึกข้อมูล</title><link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet"><style>body { font-family: 'Sarabun', sans-serif; padding: 30px; color: #000; } h2 { text-align: center; margin-bottom: 5px; font-size: 20pt; } p.sub-head { text-align: center; margin-top: 0; color: #444; font-size: 14pt; } .info-box { margin-top: 30px; font-size: 12pt; margin-bottom: 15px; } @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } button { display: none; } }</style></head><body><h2>รายงานประวัติการบันทึกข้อมูลกำลังพล</h2><p class="sub-head">ระบบทดสอบความรู้ในการปฏิบัติงานด้านกำลังพล (R-POST)</p><div class="info-box"><strong>บัญชีผู้ใช้งาน:</strong> ${currentUserEmail}<br><strong>ข้อมูลพิมพ์เมื่อ:</strong> ${printDate}<br><strong>จำนวนรายการทั้งหมด:</strong> ${currentUserHistoryData.length} รายการ</div>${tableHtml}<div style="margin-top: 40px; text-align: center; font-size: 11pt; color: #777;">- สิ้นสุดรายงาน -</div><script>setTimeout(function() { window.print(); }, 800);<\/script></body></html>`;
-            printWindow.document.open(); printWindow.document.write(html); printWindow.document.close();
+
+            let html = `<!DOCTYPE html>
+            <html lang="th">
+            <head>
+                <meta charset="UTF-8">
+                <title>พิมพ์ประวัติการบันทึกข้อมูล</title>
+                <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+                <style>
+                    body { font-family: 'Sarabun', sans-serif; padding: 2cm; color: #000; line-height: 1.5; }
+                    h2 { text-align: center; margin-bottom: 5px; font-size: 18pt; font-weight: bold; }
+                    p.sub-head { text-align: center; margin-top: 0; color: #333; font-size: 14pt; }
+                    .info-box { margin-top: 20px; font-size: 12pt; margin-bottom: 20px; border: 1px solid #ddd; padding: 15px; border-radius: 8px; }
+                    .logo-print { display: block; height: 80px; width: auto; margin: 0 auto 15px; }
+                    @media print {
+                        body { padding: 0; }
+                        @page { size: A4; margin: 1.5cm; }
+                        .no-print { display: none; }
+                    }
+                </style>
+            </head>
+            <body>
+                <img src="assets/logo.png" class="logo-print">
+                <h2>รายงานประวัติการบันทึกข้อมูลกำลังพล</h2>
+                <p class="sub-head">ระบบทดสอบความรู้ในการปฏิบัติงานด้านกำลังพล (R-POST)</p>
+                <div class="info-box">
+                    <strong>บัญชีผู้ใช้งาน:</strong> ${currentUserEmail}<br>
+                    <strong>ข้อมูลพิมพ์เมื่อ:</strong> ${printDate}<br>
+                    <strong>จำนวนรายการทั้งหมด:</strong> ${currentUserHistoryData.length} รายการ
+                </div>
+                ${tableHtml}
+                <div style="margin-top: 40px; text-align: center; font-size: 10pt; color: #666;">
+                    - เอกสารนี้สร้างขึ้นโดยระบบอัตโนมัติ -
+                </div>
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() { window.print(); window.close(); }, 1000);
+                    };
+                <\/script>
+            </body>
+            </html>`;
+            printWindow.document.open();
+            printWindow.document.write(html);
+            printWindow.document.close();
         }
     </script>
 </body>
