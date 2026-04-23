@@ -147,6 +147,37 @@
                 display: none !important;
             }
         }
+
+        /* Modern Button & Card Hover */
+        .btn-hover {
+            @apply transform transition-all duration-300;
+        }
+        .btn-hover:hover {
+            @apply -translate-y-1 shadow-lg brightness-110;
+        }
+
+        .card-hover {
+            @apply transition-all duration-300;
+        }
+        .card-hover:hover {
+            @apply shadow-xl scale-[1.01] border-blue-200;
+        }
+
+        /* Table Row Entrance */
+        @keyframes rowIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .animate-row {
+            animation: rowIn 0.4s ease-out forwards;
+        }
+
+        /* Glassmorphism Sidebar/Footer */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
     </style>
 </head>
 
@@ -183,7 +214,7 @@
                     <input type="password" id="loginPass" required class="input-field" placeholder="••••••••">
                 </div>
                 <button type="submit"
-                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-lg font-bold text-white bg-gradient-to-r from-blue-700 to-blue-900 hover:from-blue-800 hover:to-blue-950 transform hover:-translate-y-1 transition-all duration-300 mt-6">
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-lg font-bold text-white bg-gradient-to-r from-blue-700 to-blue-900 hover:from-blue-800 hover:to-blue-950 transform hover:-translate-y-1 transition-all duration-300 mt-6 btn-hover">
                     เข้าสู่ระบบ
                 </button>
                 <p class="text-center text-sm text-gray-500 mt-4">ยังไม่มีบัญชี? <a href="#" onclick="toggleAuthMode()"
@@ -210,7 +241,7 @@
                     <input type="password" id="regPassConfirm" required class="input-field" placeholder="••••••••">
                 </div>
                 <button type="submit"
-                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-lg font-bold text-white bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 transform hover:-translate-y-1 transition-all duration-300 mt-6">
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-lg font-bold text-white bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 transform hover:-translate-y-1 transition-all duration-300 mt-6 btn-hover">
                     สมัครสมาชิก
                 </button>
                 <p class="text-center text-sm text-gray-500 mt-4">มีบัญชีแล้ว? <a href="#" onclick="toggleAuthMode()"
@@ -1044,6 +1075,7 @@
                     <strong>ข้อมูลพิมพ์เมื่อ:</strong> ${printDate}<br>
                     <strong>จำนวนรายการทั้งหมด:</strong> ${currentUserHistoryData.length} รายการ
                 </div>
+
                 ${tableHtml}
                 <div style="margin-top: 40px; text-align: center; font-size: 10pt; color: #666;">
                     - เอกสารนี้สร้างขึ้นโดยระบบอัตโนมัติ -
@@ -1060,6 +1092,23 @@
             printWindow.document.close();
         }
     </script>
-</body>
+    <footer class="mt-10 mb-8 text-gray-500 text-sm font-medium animate-bounce-slow flex justify-center no-print">
+        <div class="flex items-center gap-2 glass px-6 py-2 rounded-full shadow-sm border border-gray-200">
+            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+            Dev By <span class="text-blue-700 font-bold">SPK</span>
+            <span class="mx-2 text-gray-300">|</span>
+            <span>R-POST v2.1.0</span>
+        </div>
+    </footer>
 
+    <style>
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        .animate-bounce-slow {
+            animation: bounce-slow 3s ease-in-out infinite;
+        }
+    </style>
+</body>
 </html>
