@@ -536,12 +536,14 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">อีเมล (Email)</label>
                     <input type="email" id="loginEmail" required class="input-field" placeholder="test@gmail.com">
                 </div>
-                <div class="relative">
+                <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">รหัสผ่าน (Password)</label>
-                    <input type="password" id="loginPass" required class="input-field pr-12" placeholder="••••••••">
-                    <button type="button" onclick="togglePasswordVisibility('loginPass')" class="absolute right-3 top-[38px] text-gray-400 hover:text-blue-600 transition-colors">
-                        <i class="fas fa-eye" id="loginPass_eye"></i>
-                    </button>
+                    <div class="relative">
+                        <input type="password" id="loginPass" required class="input-field pr-12 mt-1" placeholder="••••••••">
+                        <button type="button" onclick="togglePasswordVisibility('loginPass')" class="absolute right-4 top-1/2 -translate-y-1/2 mt-0.5 text-gray-400 hover:text-blue-600 transition-colors">
+                            <i class="fas fa-eye" id="loginPass_eye"></i>
+                        </button>
+                    </div>
                 </div>
                 <button type="submit"
                     class="w-full flex justify-center items-center py-3 px-4 border-2 border-blue-400/50 rounded-lg shadow-md text-lg font-bold text-white bg-gradient-to-r from-blue-700 to-blue-900 hover:from-blue-800 hover:to-blue-950 transform hover:-translate-y-1 transition-all duration-300 mt-6 btn-hover">
@@ -562,19 +564,23 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">อีเมลใหม่ (Email)</label>
                     <input type="email" id="regEmail" required class="input-field" placeholder="test@gmail.com">
                 </div>
-                <div class="relative">
+                <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">ตั้งรหัสผ่าน (Password)</label>
-                    <input type="password" id="regPass" required class="input-field pr-12" placeholder="••••••••">
-                    <button type="button" onclick="togglePasswordVisibility('regPass')" class="absolute right-3 top-[38px] text-gray-400 hover:text-blue-600 transition-colors">
-                        <i class="fas fa-eye" id="regPass_eye"></i>
-                    </button>
+                    <div class="relative">
+                        <input type="password" id="regPass" required class="input-field pr-12 mt-1" placeholder="••••••••">
+                        <button type="button" onclick="togglePasswordVisibility('regPass')" class="absolute right-4 top-1/2 -translate-y-1/2 mt-0.5 text-gray-400 hover:text-blue-600 transition-colors">
+                            <i class="fas fa-eye" id="regPass_eye"></i>
+                        </button>
+                    </div>
                 </div>
-                <div class="relative">
+                <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">ยืนยันรหัสผ่าน</label>
-                    <input type="password" id="regPassConfirm" required class="input-field pr-12" placeholder="••••••••">
-                    <button type="button" onclick="togglePasswordVisibility('regPassConfirm')" class="absolute right-3 top-[38px] text-gray-400 hover:text-blue-600 transition-colors">
-                        <i class="fas fa-eye" id="regPassConfirm_eye"></i>
-                    </button>
+                    <div class="relative">
+                        <input type="password" id="regPassConfirm" required class="input-field pr-12 mt-1" placeholder="••••••••">
+                        <button type="button" onclick="togglePasswordVisibility('regPassConfirm')" class="absolute right-4 top-1/2 -translate-y-1/2 mt-0.5 text-gray-400 hover:text-blue-600 transition-colors">
+                            <i class="fas fa-eye" id="regPassConfirm_eye"></i>
+                        </button>
+                    </div>
                 </div>
                 <button type="submit"
                     class="w-full flex justify-center items-center py-3 px-4 border-2 border-green-400/50 rounded-lg shadow-md text-lg font-bold text-white bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 transform hover:-translate-y-1 transition-all duration-300 mt-6 btn-hover">
