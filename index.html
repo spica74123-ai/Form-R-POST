@@ -14,6 +14,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
+    <!-- Icons & Animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <link rel="icon" type="image/png" href="assets/logo.png">
@@ -173,10 +177,27 @@
         }
 
         /* Glassmorphism Sidebar/Footer */
+        /* Glassmorphism Sidebar/Footer */
         .glass {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+        }
+
+        .admin-gradient-text {
+            background: linear-gradient(to right, #4f46e5, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
     </style>
 </head>
@@ -214,8 +235,8 @@
                     <input type="password" id="loginPass" required class="input-field" placeholder="••••••••">
                 </div>
                 <button type="submit"
-                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-lg font-bold text-white bg-gradient-to-r from-blue-700 to-blue-900 hover:from-blue-800 hover:to-blue-950 transform hover:-translate-y-1 transition-all duration-300 mt-6 btn-hover">
-                    เข้าสู่ระบบ
+                    class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-md text-lg font-bold text-white bg-gradient-to-r from-blue-700 to-blue-900 hover:from-blue-800 hover:to-blue-950 transform hover:-translate-y-1 transition-all duration-300 mt-6 btn-hover">
+                    <i class="fas fa-sign-in-alt mr-2"></i> เข้าสู่ระบบ
                 </button>
                 <p class="text-center text-sm text-gray-500 mt-4">ยังไม่มีบัญชี? <a href="#" onclick="toggleAuthMode()"
                         class="text-blue-600 font-semibold hover:underline transition-colors">สมัครสมาชิก</a></p>
@@ -241,8 +262,8 @@
                     <input type="password" id="regPassConfirm" required class="input-field" placeholder="••••••••">
                 </div>
                 <button type="submit"
-                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-lg font-bold text-white bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 transform hover:-translate-y-1 transition-all duration-300 mt-6 btn-hover">
-                    สมัครสมาชิก
+                    class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-md text-lg font-bold text-white bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 transform hover:-translate-y-1 transition-all duration-300 mt-6 btn-hover">
+                    <i class="fas fa-user-plus mr-2"></i> สมัครสมาชิก
                 </button>
                 <p class="text-center text-sm text-gray-500 mt-4">มีบัญชีแล้ว? <a href="#" onclick="toggleAuthMode()"
                         class="text-blue-600 font-semibold hover:underline transition-colors">เข้าสู่ระบบ</a></p>
@@ -295,14 +316,16 @@
 
         <!-- Tabs Navigation -->
         <div class="flex border-b border-gray-200 bg-gray-50 flex-col sm:flex-row text-sm p-1 gap-1">
+            <button type="button" id="btnTabAdmin"
+                class="flex-1 py-3 text-center font-medium text-gray-500 border-b-2 border-transparent hover:text-blue-600 hover:bg-gray-100 rounded-t-lg transition-all duration-300 focus:outline-none hidden"><i class="fas fa-chart-pie mr-2"></i>ภาพรวมระบบ</button>
             <button type="button" id="btnTabBulk"
-                class="flex-1 py-3 text-center font-bold text-blue-800 border-b-2 border-blue-800 bg-white rounded-t-lg transition-all duration-300 focus:outline-none shadow-sm hidden">ส่งรายชื่อระดับหน่วย</button>
+                class="flex-1 py-3 text-center font-bold text-blue-800 border-b-2 border-blue-800 bg-white rounded-t-lg transition-all duration-300 focus:outline-none shadow-sm hidden"><i class="fas fa-file-excel mr-2"></i>ส่งรายชื่อระดับหน่วย</button>
             <button type="button" id="btnTabIndividual"
-                class="flex-1 py-3 text-center font-bold text-blue-800 border-b-2 border-blue-800 bg-white rounded-t-lg transition-all duration-300 focus:outline-none shadow-sm">บันทึกรายบุคคล</button>
+                class="flex-1 py-3 text-center font-bold text-blue-800 border-b-2 border-blue-800 bg-white rounded-t-lg transition-all duration-300 focus:outline-none shadow-sm"><i class="fas fa-user-edit mr-2"></i>บันทึกรายบุคคล</button>
             <button type="button" id="btnTabEligible"
-                class="flex-1 py-3 text-center font-medium text-gray-500 border-b-2 border-transparent hover:text-blue-600 hover:bg-gray-100 rounded-t-lg transition-all duration-300 focus:outline-none">ประกาศผู้มีสิทธิ์สอบ</button>
+                class="flex-1 py-3 text-center font-medium text-gray-500 border-b-2 border-transparent hover:text-blue-600 hover:bg-gray-100 rounded-t-lg transition-all duration-300 focus:outline-none"><i class="fas fa-bullhorn mr-2"></i>ประกาศสอบ</button>
             <button type="button" id="btnTabReport"
-                class="flex-1 py-3 text-center font-medium text-gray-500 border-b-2 border-transparent hover:text-blue-600 hover:bg-gray-100 rounded-t-lg transition-all duration-300 focus:outline-none">ระบบรายงานผล</button>
+                class="flex-1 py-3 text-center font-medium text-gray-500 border-b-2 border-transparent hover:text-blue-600 hover:bg-gray-100 rounded-t-lg transition-all duration-300 focus:outline-none"><i class="fas fa-download mr-2"></i>ระบบรายงาน</button>
         </div>
 
         <!-- TAB 1: ส่งรายชื่อระดับหน่วย -->
@@ -337,7 +360,9 @@
                 </div>
                 <div class="pt-6">
                     <button type="submit"
-                        class="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 transform hover:-translate-y-1 hover:shadow-xl transition-all duration-300">ส่งไฟล์บัญชีรายชื่อหน่วย</button>
+                        class="w-full flex justify-center items-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 transform hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+                        <i class="fas fa-paper-plane mr-2 animate__animated animate__pulse animate__infinite"></i> ส่งไฟล์บัญชีรายชื่อหน่วย
+                    </button>
                 </div>
             </form>
         </div>
@@ -485,7 +510,9 @@
 
                 <div class="pt-6">
                     <button type="submit"
-                        class="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white bg-gradient-to-r from-blue-700 to-blue-800 hover:from-blue-800 hover:to-blue-900 transform hover:-translate-y-1 hover:shadow-xl transition-all duration-300">บันทึกข้อมูล</button>
+                        class="w-full flex justify-center items-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white bg-gradient-to-r from-blue-700 to-blue-800 hover:from-blue-800 hover:to-blue-900 transform hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+                        <i class="fas fa-save mr-2"></i> บันทึกข้อมูล
+                    </button>
                 </div>
             </form>
 
@@ -494,10 +521,13 @@
                     <h3 class="text-xl font-bold text-gray-800">ประวัติการบันทึกข้อมูลของท่าน</h3>
                     <div class="flex flex-wrap gap-2 w-full sm:w-auto">
                         <button type="button" onclick="printUserHistory()"
-                            class="flex-1 sm:flex-none px-4 py-2 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 font-bold">พิมพ์ประวัติ</button>
+                            class="flex-1 sm:flex-none flex items-center justify-center px-4 py-2 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 font-bold transition-transform hover:scale-105">
+                            <i class="fas fa-print mr-2"></i> พิมพ์ประวัติ
+                        </button>
                         <button type="button" onclick="downloadUserHistory()"
-                            class="flex-1 sm:flex-none px-4 py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 font-bold">โหลดประวัติ
-                            (Excel)</button>
+                            class="flex-1 sm:flex-none flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 font-bold transition-transform hover:scale-105">
+                            <i class="fas fa-file-excel mr-2"></i> โหลดประวัติ
+                        </button>
                     </div>
                 </div>
 
@@ -523,7 +553,8 @@
                                 <th class="px-4 py-4 font-bold whitespace-nowrap">วัน/เวลา</th>
                                 <th class="px-4 py-4 font-bold whitespace-nowrap">เลข ปชช.</th>
                                 <th class="px-4 py-4 font-bold whitespace-nowrap">ยศ ชื่อ-นามสกุล</th>
-                                <th class="px-4 py-4 font-bold whitespace-nowrap">หน่วย/สังกัด</th>
+                                <th class="px-4 py-4 font-bold whitespace-nowrap">หน่วย</th>
+                                <th class="px-4 py-4 font-bold whitespace-nowrap">สังกัด</th>
                                 <th class="px-4 py-4 font-bold whitespace-nowrap">ตำแหน่งปกติ</th>
                                 <th class="px-4 py-4 font-bold whitespace-nowrap">ตำแหน่งในสนาม</th>
                                 <th class="px-4 py-4 font-bold text-center whitespace-nowrap">คะแนน (%)</th>
@@ -587,11 +618,86 @@
             <h3 class="text-3xl font-bold text-gray-900">ประกาศรายชื่อผลการทดสอบ</h3>
             <div class="mt-10 flex flex-col sm:flex-row justify-center gap-6">
                 <button type="button" onclick="downloadReport('ผ่าน')"
-                    class="px-8 py-4 shadow-lg text-lg font-bold rounded-xl text-white bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700">ดาวน์โหลดรายชื่อ
-                    "ผ่าน"</button>
+                    class="flex items-center justify-center px-8 py-4 shadow-lg text-lg font-bold rounded-xl text-white bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 transform hover:-translate-y-1 transition-all">
+                    <i class="fas fa-download mr-2 animate__animated animate__bounce animate__infinite animate__slower"></i> ดาวน์โหลดรายชื่อ "ผ่าน"
+                </button>
                 <button type="button" onclick="downloadReport('ไม่ผ่าน')"
-                    class="px-8 py-4 shadow-lg text-lg font-bold rounded-xl text-white bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700">ดาวน์โหลดรายชื่อ
-                    "ไม่ผ่าน"</button>
+                    class="flex items-center justify-center px-8 py-4 shadow-lg text-lg font-bold rounded-xl text-white bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 transform hover:-translate-y-1 transition-all">
+                    <i class="fas fa-download mr-2"></i> ดาวน์โหลดรายชื่อ "ไม่ผ่าน"
+                </button>
+            </div>
+        </div>
+        <!-- TAB 5: แดชบอร์ดผู้ดูแลระบบ -->
+        <div id="tabAdmin" class="hidden bg-gray-50/50 p-6 md:p-8 min-h-[600px] tab-content">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                <div>
+                    <h3 class="text-3xl font-extrabold text-gray-900 tracking-tight admin-gradient-text drop-shadow-sm">แดชบอร์ดข้อมูลระดับกรม</h3>
+                    <p class="text-sm text-gray-500 mt-2 font-medium">ดูรายงานเชิงลึกและข้อมูลกำลังพลที่ถูกบันทึกในระบบทั้งหมด</p>
+                </div>
+                <div class="w-full md:w-72">
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">กรองตามหน่วย</label>
+                    <div class="relative">
+                        <select id="adminUnitFilter" class="w-full pl-4 pr-10 py-3 bg-white border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none text-gray-700 font-medium transition-all" onchange="fetchAdminDashboardData()">
+                            <option value="all">ดูทุกหน่วย</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
+                <div class="glass-panel p-6 border-b-4 border-indigo-500 hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden">
+                    <div class="absolute -right-4 -bottom-4 w-16 h-16 bg-indigo-100 rounded-full opacity-50 blur-lg"></div>
+                    <p class="text-sm font-bold text-gray-500 uppercase">กำลังพลทั้งหมด</p>
+                    <p class="text-4xl font-extrabold text-indigo-700 mt-2 tracking-tight" id="adminStatTotal">0</p>
+                </div>
+                <div class="glass-panel p-6 border-b-4 border-emerald-500 hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden">
+                    <div class="absolute -right-4 -bottom-4 w-16 h-16 bg-emerald-100 rounded-full opacity-50 blur-lg"></div>
+                    <p class="text-sm font-bold text-gray-500 uppercase">ผ่านการทดสอบ</p>
+                    <p class="text-4xl font-extrabold text-emerald-600 mt-2 tracking-tight" id="adminStatPass">0</p>
+                </div>
+                <div class="glass-panel p-6 border-b-4 border-rose-500 hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden">
+                    <div class="absolute -right-4 -bottom-4 w-16 h-16 bg-rose-100 rounded-full opacity-50 blur-lg"></div>
+                    <p class="text-sm font-bold text-gray-500 uppercase">ไม่ผ่านการทดสอบ</p>
+                    <p class="text-4xl font-extrabold text-rose-600 mt-2 tracking-tight" id="adminStatFail">0</p>
+                </div>
+                <div class="glass-panel p-6 border-b-4 border-amber-500 hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden">
+                    <div class="absolute -right-4 -bottom-4 w-16 h-16 bg-amber-100 rounded-full opacity-50 blur-lg"></div>
+                    <p class="text-sm font-bold text-gray-500 uppercase">ไม่มีใบประกาศ</p>
+                    <p class="text-4xl font-extrabold text-amber-600 mt-2 tracking-tight" id="adminStatNoCert">0</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                <div class="p-6 border-b border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <h4 class="text-lg font-bold text-gray-800">รายชื่อกำลังพลที่ถูกบันทึก</h4>
+                    <button onclick="downloadAdminReport()" class="w-full sm:w-auto px-5 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl shadow-md hover:bg-indigo-700 transition-all hover:-translate-y-0.5 flex items-center justify-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        ส่งออก Excel
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-600">
+                        <thead class="text-xs text-gray-500 uppercase bg-gray-50 tracking-wider border-b border-gray-200">
+                            <tr>
+                                <th class="px-6 py-4 font-bold whitespace-nowrap">หน่วย</th>
+                                <th class="px-6 py-4 font-bold whitespace-nowrap">สังกัด</th>
+                                <th class="px-6 py-4 font-bold whitespace-nowrap">ยศ ชื่อ-นามสกุล</th>
+                                <th class="px-6 py-4 font-bold whitespace-nowrap">ตำแหน่งปกติ</th>
+                                <th class="px-6 py-4 font-bold text-center whitespace-nowrap">คะแนน (%)</th>
+                                <th class="px-6 py-4 font-bold text-center whitespace-nowrap">สถานะ</th>
+                                <th class="px-6 py-4 font-bold whitespace-nowrap">ผู้บันทึก (Email)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody" class="divide-y divide-gray-100">
+                            <tr>
+                                <td colspan="7" class="px-6 py-12 text-center text-gray-400">กำลังโหลดข้อมูล...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -649,6 +755,14 @@
                         case 'getReportData':
                             resolve([]);
                             break;
+                        case 'getAdminDashboardData':
+                            resolve([
+                                ["2026-04-23T10:00:00Z", "admin@army.mi.th", "1111111111111", "สิบเอก", "สมชาย", "ใจดี", "หน่วยจำลอง A", "ร้อย.1", "ผบ.หมู่", "-", 85.5, 85.5, "ผ่าน", "2024-04-01", "2026-04-01"],
+                                ["2026-04-23T11:30:00Z", "user2@army.mi.th", "2222222222222", "ร้อยโท", "มานะ", "อดทน", "หน่วยจำลอง B", "ร้อย.2", "ผบ.หมวด", "-", 50.0, 50.0, "ไม่ผ่าน", "2024-03-15", "2026-03-15"],
+                                ["2026-04-23T14:15:00Z", "user3@army.mi.th", "3333333333333", "พลทหาร", "สมหวัง", "ตั้งใจ", "หน่วยจำลอง A", "ร้อย.1", "พลปืนเล็ก", "-", null, null, "ไม่มีใบประกาศ", null, null],
+                                ["2026-04-23T15:45:00Z", "admin@army.mi.th", "4444444444444", "ร้อยเอก", "สมเกียรติ", "กล้าหาญ", "หน่วยจำลอง C", "บก.พัน", "ผบ.ร้อย", "-", 92.0, 92.0, "ผ่าน", "2024-05-10", "2026-05-10"],
+                            ]);
+                            break;
                         default:
                             resolve({ success: false, message: "Mock action not found" });
                     }
@@ -673,6 +787,10 @@
                     const el = document.getElementById(id);
                     if (el) el.innerHTML = options;
                 });
+                const adminFilter = document.getElementById('adminUnitFilter');
+                if (adminFilter) {
+                    adminFilter.innerHTML = '<option value="all">ดูทุกหน่วย</option>' + options.replace('<option value="">-- เลือกหน่วย --</option>', '');
+                }
             } catch (e) {
                 console.log("กำลังรอตั้งค่า API ให้สมบูรณ์...");
             }
@@ -731,7 +849,7 @@
 
         document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', function () { this.classList.remove('!border-red-500', '!bg-red-50'); }));
 
-        const tabs = [{ btn: 'btnTabBulk', content: 'tabBulk' }, { btn: 'btnTabIndividual', content: 'tabIndividual' }, { btn: 'btnTabEligible', content: 'tabEligible' }, { btn: 'btnTabReport', content: 'tabReport' }];
+        const tabs = [{ btn: 'btnTabAdmin', content: 'tabAdmin' }, { btn: 'btnTabBulk', content: 'tabBulk' }, { btn: 'btnTabIndividual', content: 'tabIndividual' }, { btn: 'btnTabEligible', content: 'tabEligible' }, { btn: 'btnTabReport', content: 'tabReport' }];
         tabs.forEach(t => {
             document.getElementById(t.btn).addEventListener('click', () => {
                 tabs.forEach(x => {
@@ -932,8 +1050,16 @@
             const userUnit = unit || sessionStorage.getItem('rpost_unit');
             if (userUnit) { setTimeout(() => { if (document.getElementById('unit')) document.getElementById('unit').value = userUnit; if (document.getElementById('bulkUnit')) document.getElementById('bulkUnit').value = userUnit; }, 500); }
 
-            if (isAdmin || sessionStorage.getItem('rpost_isadmin') === 'true') { document.getElementById('btnTabBulk').classList.remove('hidden'); }
-            else { document.getElementById('btnTabBulk').classList.add('hidden'); document.getElementById('btnTabIndividual').click(); }
+            if (isAdmin || sessionStorage.getItem('rpost_isadmin') === 'true') { 
+                document.getElementById('btnTabBulk').classList.remove('hidden'); 
+                document.getElementById('btnTabAdmin').classList.remove('hidden');
+                document.getElementById('btnTabAdmin').click();
+                fetchAdminDashboardData();
+            } else { 
+                document.getElementById('btnTabBulk').classList.add('hidden'); 
+                document.getElementById('btnTabAdmin').classList.add('hidden');
+                document.getElementById('btnTabIndividual').click(); 
+            }
             fetchUserHistory();
         }
 
@@ -964,6 +1090,74 @@
             } catch (err) { Swal.fire('Error', err.message, 'error'); }
         });
 
+        let globalAdminData = [];
+
+        async function fetchAdminDashboardData() {
+            if (sessionStorage.getItem('rpost_isadmin') !== 'true') return;
+            
+            try {
+                if (globalAdminData.length === 0) {
+                    const data = await callGasApi('getAdminDashboardData', {});
+                    if (data) globalAdminData = [...data];
+                }
+                
+                const selectedUnit = document.getElementById('adminUnitFilter').value;
+                const filteredData = selectedUnit === 'all' ? globalAdminData : globalAdminData.filter(row => row[6] === selectedUnit);
+                
+                let html = '', passCount = 0, failCount = 0, noCertCount = 0;
+
+                if (filteredData.length === 0) {
+                    html = `<tr><td colspan="7" class="px-6 py-12 text-center text-gray-400">ยังไม่มีข้อมูลในระบบ</td></tr>`;
+                } else {
+                    const displayData = [...filteredData].reverse();
+                    displayData.forEach(row => {
+                        const status = row[12];
+                        if (status === 'ไม่มีใบประกาศ') noCertCount++; 
+                        else if (status === 'ผ่าน') passCount++;
+                        else failCount++;
+                        
+                        let statusClass = (status === 'ผ่าน') ? 'bg-emerald-100 text-emerald-800' : (status === 'ไม่ผ่าน') ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800';
+
+                        html += `<tr class="border-b hover:bg-indigo-50/50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap font-bold text-indigo-900">${row[6]}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-600">${row[7]}</td>
+                            <td class="px-6 py-4 whitespace-nowrap font-semibold text-gray-800">${row[3]} ${row[4]} ${row[5]}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-600">${row[8]}</td>
+                            <td class="px-6 py-4 text-center whitespace-nowrap font-bold">${status === 'ไม่มีใบประกาศ' ? '-' : `${row[10]}%`}</td>
+                            <td class="px-6 py-4 text-center whitespace-nowrap"><span class="px-3 py-1 text-xs rounded-full font-bold shadow-sm ${statusClass}">${status}</span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-400">${row[1]}</td>
+                        </tr>`;
+                    });
+                }
+                
+                document.getElementById('adminTableBody').innerHTML = html; 
+                document.getElementById('adminStatTotal').innerText = filteredData.length; 
+                document.getElementById('adminStatPass').innerText = passCount; 
+                document.getElementById('adminStatFail').innerText = failCount;
+                document.getElementById('adminStatNoCert').innerText = noCertCount;
+                
+            } catch (err) { console.error("Admin fetch error", err); }
+        }
+
+        function downloadAdminReport() {
+            if (globalAdminData.length === 0) return Swal.fire('แจ้งเตือน', 'ไม่มีข้อมูลให้ส่งออก', 'info');
+            Swal.fire({ title: 'กำลังเตรียมไฟล์...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            
+            const selectedUnit = document.getElementById('adminUnitFilter').value;
+            const filteredData = selectedUnit === 'all' ? globalAdminData : globalAdminData.filter(row => row[6] === selectedUnit);
+            
+            const unitText = selectedUnit === 'all' ? 'ทุกหน่วย' : selectedUnit;
+            const aoa = [[`รายงานข้อมูลเชิงลึกกำลังพล - ${unitText}`], ["วัน/เวลา", "ผู้บันทึก (อีเมล)", "เลขบัตร ปชช.", "ยศ", "ชื่อ", "นามสกุล", "หน่วย", "สังกัด", "ตำแหน่งปกติ", "ตำแหน่งในสนาม", "คะแนน", "ร้อยละ", "สถานะ", "วันที่ออก", "วันหมดอายุ"]];
+            
+            [...filteredData].reverse().forEach(row => aoa.push([row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14]]));
+            
+            const ws = XLSX.utils.aoa_to_sheet(aoa); ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 14 } }];
+            ws['!cols'] = [{ wch: 20 }, { wch: 25 }, { wch: 15 }, { wch: 10 }, { wch: 15 }, { wch: 15 }, { wch: 20 }, { wch: 15 }, { wch: 20 }, { wch: 20 }, { wch: 8 }, { wch: 8 }, { wch: 15 }, { wch: 12 }, { wch: 12 }];
+            const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, `Report`); 
+            XLSX.writeFile(wb, `Admin_Report_${selectedUnit === 'all' ? 'All' : selectedUnit}.xlsx`); 
+            Swal.fire('สำเร็จ', 'ดาวน์โหลดไฟล์ Excel แล้ว', 'success');
+        }
+
         async function fetchUserHistory() {
             if (!currentUserEmail) return;
             try {
@@ -973,7 +1167,7 @@
                 let html = '', hasCertCount = 0, noCertCount = 0;
 
                 if (data.length === 0) {
-                    html = `<tr><td colspan="9" class="px-5 py-8 text-center text-gray-400">ยังไม่มีประวัติการบันทึกข้อมูล</td></tr>`;
+                    html = `<tr><td colspan="10" class="px-5 py-8 text-center text-gray-400">ยังไม่มีประวัติการบันทึกข้อมูล</td></tr>`;
                 } else {
                     const displayData = [...data].reverse();
                     displayData.forEach(row => {
@@ -986,7 +1180,8 @@
                             <td class="px-4 py-4 whitespace-nowrap">${dateStr}</td>
                             <td class="px-4 py-4 whitespace-nowrap">${row[2]}</td>
                             <td class="px-4 py-4 whitespace-nowrap font-medium text-gray-900">${row[3]} ${row[4]} ${row[5]}</td>
-                            <td class="px-4 py-4 whitespace-nowrap">${row[6]}<br><span class="text-xs text-gray-500">${row[7]}</span></td>
+                            <td class="px-4 py-4 whitespace-nowrap">${row[6]}</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-xs text-gray-500">${row[7]}</td>
                             <td class="px-4 py-4 whitespace-nowrap text-xs">${row[8]}</td>
                             <td class="px-4 py-4 whitespace-nowrap text-xs">${row[9]}</td>
                             <td class="px-4 py-4 text-center whitespace-nowrap">${status === 'ไม่มีใบประกาศ' ? '-' : `${row[10]} (${row[11]}%)`}</td>
