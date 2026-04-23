@@ -9,7 +9,7 @@ const FOLDER_ID = "1iPmZQUHM6S2jYgKfd0ZKFTaP_8OCK2w1"; // <- นำ ID ของ
 // ชื่อชีตต่างๆ ใน Google Sheet
 const SHEET_NAME = "Sheet1"; // สำหรับเก็บข้อมูลรายบุคคล
 const USERS_SHEET_NAME = "Users"; // สำหรับเก็บข้อมูลผู้ใช้งาน (ล็อกอิน)
-const BULK_SHEET_NAME = "รายชื่อระดับหน่วย"; // สำหรับเก็บรายชื่อหน่วย
+const BULK_SHEET_NAME = "หน่วย"; // สำหรับเก็บรายชื่อหน่วย
 
 // ฟังก์ชันหลักที่รับ Request จาก HTML Frontend
 function doPost(e) {
