@@ -243,41 +243,26 @@
             @apply border-gray-400;
         }
 
-        /* Logo Enhancement */
+        /* Logo Styling */
         .logo-container {
             position: relative;
-            width: 140px;
-            height: 140px;
-            margin: 0 auto 20px;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 0 30px rgba(59, 130, 246, 0.3), inset 0 0 15px rgba(255, 255, 255, 0.2);
-            overflow: hidden;
-            animation: logoContainerEntrance 1.5s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .logo-container::after {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
-            transform: rotate(45deg);
-            animation: logoShine 6s infinite;
+            overflow: visible;
+            animation: logoContainerEntrance 1.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .logo-main {
-            height: 100px;
+            height: 140px;
             width: auto;
             position: relative;
             z-index: 2;
-            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
-            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
+            transition: transform 0.4s ease;
         }
 
         .logo-container:hover .logo-main {
@@ -285,15 +270,9 @@
         }
 
         @keyframes logoContainerEntrance {
-            from { opacity: 0; transform: scale(0.8) translateY(20px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        @keyframes logoShine {
-            0% { left: -150%; top: -150%; }
-            20%, 100% { left: 150%; top: 150%; }
-        }
-
         /* Floating Animation for Icons */
         .floating-icon {
             animation: float 3s ease-in-out infinite;
@@ -508,7 +487,7 @@
             <div class="absolute -left-10 -bottom-10 w-32 h-32 bg-indigo-500 rounded-full opacity-20 blur-2xl animate-pulse"></div>
 
             <div class="logo-container">
-                <img src="assets/logo.png" alt="Logo" class="logo-main">
+                <img src="assets/logo2.png" alt="Logo" class="logo-main">
             </div>
 
             <h2 class="text-3xl font-bold uppercase tracking-wide relative z-10">R-POST System</h2>
@@ -585,7 +564,7 @@
             </button>
 
             <div class="logo-container">
-                <img src="assets/logo.png" alt="Logo" class="logo-main">
+                <img src="assets/logo2.png" alt="Logo" class="logo-main">
             </div>
 
             <h2 class="text-3xl sm:text-4xl font-bold uppercase tracking-wide relative z-10 drop-shadow-md">
