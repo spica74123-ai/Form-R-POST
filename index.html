@@ -1061,8 +1061,7 @@
         // ==========================================
         // ⚠️ การตั้งค่าการเชื่อมต่อ API ของ VERCEL
         // ==========================================
-        // ให้นำ URL Web App ของ Google Apps Script มาใส่ตรงนี้
-        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyPt6sDMSOA4bFtIphcNkjt4jO398jLw3SxaTjh5wsIE347LQ-nTdqVhGzowwRarEy3/exec";
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwXo50bnBFqNXhSTHJPJt65pPh2XaxpMGWf5_bkdSc_3Cf9IDXIREiSe3U4UANGfKVe/exec";
 
         async function callGasApi(action, dataPayload) {
             try {
@@ -1129,12 +1128,19 @@
 
         async function loadUnitList() {
             try {
+                console.log("Fetching units from:", GAS_API_URL);
                 const units = await callGasApi('getUnitList', {});
+                console.log("Units received:", units);
+                
                 let options = '<option value="">-- เลือกหน่วย --</option>';
-                if (units && units.length > 0) {
+                if (Array.isArray(units) && units.length > 0) {
                     units.forEach(u => { options += `<option value="${u}">${u}</option>`; });
                 } else {
+                    console.warn("Units is not an array or is empty:", units);
                     options = '<option value="">-- ไม่พบข้อมูล --</option>';
+                    if (units && units.message) {
+                        options = `<option value="">-- Error: ${units.message} --</option>`;
+                    }
                 }
                 const ids = ['loginUnit', 'regUnit', 'unit', 'bulkUnit'];
                 ids.forEach(id => {
@@ -1146,7 +1152,12 @@
                     adminFilter.innerHTML = '<option value="all">ดูทุกหน่วย</option>' + options.replace('<option value="">-- เลือกหน่วย --</option>', '');
                 }
             } catch (e) {
-                console.log("กำลังรอตั้งค่า API ให้สมบูรณ์...");
+                console.error("Failed to load units:", e);
+                const ids = ['loginUnit', 'regUnit', 'unit', 'bulkUnit'];
+                ids.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.innerHTML = `<option value="">-- Error: ${e.message} --</option>`;
+                });
             }
         }
 
