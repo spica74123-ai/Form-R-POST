@@ -1188,20 +1188,31 @@
             }
         }
 
-        document.getElementById('score').addEventListener('input', function () {
-            const scoreVal = parseFloat(this.value);
+        function calculateStatus() {
+            const scoreVal = parseFloat(document.getElementById('score').value);
+            const rank = document.getElementById('rank').value;
+            const percentageEl = document.getElementById('percentage');
+            const statusEl = document.getElementById('status');
+
             if (!isNaN(scoreVal)) {
                 const percentage = scoreVal;
-                document.getElementById('percentage').value = percentage.toFixed(2);
-                document.getElementById('percentage').classList.remove('!border-red-500', '!bg-red-50');
-                const statusEl = document.getElementById('status');
-                statusEl.value = (percentage >= 60) ? "ผ่าน" : "ไม่ผ่าน";
+                percentageEl.value = percentage.toFixed(2);
+                percentageEl.classList.remove('!border-red-500', '!bg-red-50');
+
+                // นายทหาร (Commissioned Officers) - Pass 70%
+                const commissionedRanks = ["พลเอก", "พลโท", "พลตรี", "พันเอก", "พันโท", "พันตรี", "ร้อยเอก", "ร้อยโท", "ร้อยตรี"];
+                const passingScore = commissionedRanks.includes(rank) ? 70 : 60;
+
+                statusEl.value = (percentage >= passingScore) ? "ผ่าน" : "ไม่ผ่าน";
                 statusEl.classList.remove('!border-red-500', '!bg-red-50');
             } else {
-                document.getElementById('percentage').value = "";
-                document.getElementById('status').value = "";
+                percentageEl.value = "";
+                statusEl.value = "";
             }
-        });
+        }
+
+        document.getElementById('score').addEventListener('input', calculateStatus);
+        document.getElementById('rank').addEventListener('change', calculateStatus);
 
         document.getElementById('issueDate').addEventListener('change', function () {
             if (this.value) {
@@ -1584,7 +1595,7 @@
             // ข้อมูลหัวรายงาน
             const titleLine1 = "ประกาศรายชื่อกำลังพลผู้ผ่านการทดสอบความรู้ในการปฏิบัติงานด้านกำลังพลผ่านระบบออนไลน์";
             const titleLine2 = `ประจำปีงบประมาณ ${toThaiDigits(today.getFullYear() + 543)} วงรอบที่ ${toThaiDigits(1)}`; // จำลองวงรอบ
-            const titleLine3 = "กลุ่มงานที่ ๑ กลุ่มงานการเตรียมพลและงานการจัดการกำลังพล";
+            const titleLine3 = "กลุ่มงานที่ ๓ กลุ่มงานการปฏิบัติราชการสนาม";
 
             let tableHtml = `<table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14pt; font-family: 'Sarabun', sans-serif;">
                 <thead>
