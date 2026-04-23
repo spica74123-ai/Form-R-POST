@@ -93,10 +93,22 @@
             @apply border-gray-400;
         }
 
-        /* Logo Animation */
+        /* Logo Animation & Mask */
         .logo-main {
             animation: logoEntrance 1.2s ease-out forwards, logoPulse 4s ease-in-out infinite 1.2s;
             filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.1));
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: transparent;
+        }
+
+        .logo-print {
+            display: block;
+            height: 80px;
+            width: 80px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            object-fit: cover;
         }
 
         @keyframes logoEntrance {
@@ -1020,7 +1032,9 @@
                 </style>
             </head>
             <body>
-                <img src="assets/logo.png" class="logo-print">
+                <div style="text-align: center;">
+                    <img src="assets/logo.png" class="logo-print">
+                </div>
                 <h2>รายงานประวัติการบันทึกข้อมูลกำลังพล</h2>
                 <p class="sub-head">ระบบทดสอบความรู้ในการปฏิบัติงานด้านกำลังพล (R-POST)</p>
                 <div class="info-box">
